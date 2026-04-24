@@ -1,15 +1,40 @@
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { useEffect, useState } from 'react';
+import { fetchData } from './api/endpoints';
 
-export default function App() {
+function App() {
+  const [items, setItems] = useState([]);
+  const [isConnected, setIsConnected] = useState(false); // New state
+
+ useEffect(() => {
+    fetchData()
+      .then((data) => {
+        if (data) {
+          setItems(data);
+          setIsConnected(true);
+        }
+      })
+      .catch((err) => {
+        
+        console.log("Server is down");
+        setIsConnected(false);
+        setItems([]);
+      });
+  }, []);
+
   return (
-    <main style={{fontFamily: 'system-ui, sans-serif', padding: '2rem'}}>
-      <h1>React + Django</h1>
-      <p>Your frontend is configured to call the backend at:</p>
-      <code>{apiUrl}</code>
-      <p>To use the Django health endpoint, visit:</p>
-      <a href={`${apiUrl}/api/health/`} target="_blank" rel="noreferrer">
-        {apiUrl}/api/health/
-      </a>
-    </main>
-  )
+    <div>
+      <h1>Backend Status: {isConnected ? "TRUE" : "FALSE"}</h1>
+      
+      <hr />
+      
+      <h2>Backend Data:</h2>
+      {items.length > 0 ? (
+        items.map(item => <div key={item.id}>{item.name}</div>)
+      ) : (
+        <p>No data available.</p>
+      )}
+    </div>
+  );
 }
+
+export default App;
