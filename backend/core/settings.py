@@ -6,9 +6,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
     DEBUG=(bool, False),
-    DJANGO_SECRET_KEY=(str, 'change-me'),
-    DJANGO_ALLOWED_HOSTS=(str, 'localhost'),
-    DATABASE_URL=(str, 'mysql://user:password@localhost:4000/dbname'),
 )
 
 env_file = BASE_DIR / '.env'
