@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #f6f8fb;
+  color: #111827;
+}
+code {
+  display: block;
+  padding: 0.5rem;
+  background: #eef2ff;
+  border-radius: 0.375rem;
+  margin: 0.5rem 0;
+}

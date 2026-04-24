@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.env
+*key
+*venv
+env/
+
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# Docker
+**/.dockerignore
+
+# IDE
+.vscode/
+.DS_Store
+
