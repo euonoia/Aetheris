@@ -5,6 +5,7 @@ function App() {
   const [items, setItems] = useState([]);
   const [isConnected, setIsConnected] = useState(false); // New state
 
+  //sample changes commit
  useEffect(() => {
     fetchData()
       .then((data) => {
