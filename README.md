@@ -19,6 +19,10 @@
    - Backend: `http://localhost:8000`
    - Frontend: `http://localhost:3000`
 
+## Run Local Development
+1. Frontend - `npm run dev`
+2. Backend - `python manage.py runserver`
+
 ## Render backend deployment
 Render can use the backend Dockerfile directly. Set these environment variables on Render:
 - `DJANGO_SECRET_KEY`
