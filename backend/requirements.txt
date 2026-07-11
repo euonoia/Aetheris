@@ -1,4 +1,12 @@
-Django>=4.2,<5
-mysqlclient>=2.1
-django-environ>=0.10.0
-gunicorn>=21.2
+# Version floors rather than exact pins, so pip can resolve wheels that
+# actually exist for your Python/OS combo (important for Python 3.13 on
+# Windows, where very old exact pins may predate cp313 wheels).
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.9
+ultralytics>=8.3.0
+opencv-python-headless>=4.10.0.84
+numpy>=2.1,<2.3
+httpx>=0.27
+pydantic>=2.9
+jinja2>=3.1.4
