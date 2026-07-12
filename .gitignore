@@ -6,7 +6,9 @@ __pycache__/
 *key
 *venv
 env/
-
+*uploads
+*outputs
+backend/yolov8n.pt
 
 # Node
 node_modules/

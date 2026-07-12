@@ -1,0 +1,84 @@
+I am building a YOLOv8 learning project.
+
+Current stack:
+- Frontend: React + Vite + TypeScript
+- Backend: FastAPI
+- Object Detection: Ultralytics YOLOv8
+
+Current Progress:
+✅ React uploads an image to FastAPI.
+✅ FastAPI saves the uploaded image.
+✅ YOLOv8 processes the image.
+✅ The annotated image is saved inside app/outputs.
+✅ FastAPI exposes app/outputs using StaticFiles.
+✅ React displays the annotated image.
+
+Now I want to implement Phase 2B.
+
+Goal:
+After YOLO detects objects, I want the backend to return structured detection metadata, and I want React to display that information below the detected image.
+
+Backend Requirements:
+- Keep the existing /detect-image endpoint.
+- After YOLO inference, extract every detected object from results[0].boxes.
+- For each detection, return:
+  - class_id
+  - class_name
+  - confidence
+  - bounding_box (x1, y1, x2, y2)
+- Round confidence to 2 decimal places.
+- Convert tensors into normal Python types.
+- Keep returning the annotated image URL.
+- Return JSON like:
+
+{
+    "filename": "road.jpg",
+    "image_url": "http://localhost:8000/outputs/road_detected.jpg",
+    "total_detections": 3,
+    "detections": [
+        {
+            "class_id": 2,
+            "class_name": "car",
+            "confidence": 0.98,
+            "bounding_box": [120, 45, 330, 220]
+        }
+    ]
+}
+
+Frontend Requirements:
+- Update the TypeScript interfaces to match the new API response.
+- Continue displaying the annotated image.
+- Under the image, display:
+    - Total number of detections.
+    - A responsive table listing:
+        - Class ID
+        - Class Name
+        - Confidence
+        - Bounding Box Coordinates
+- Use React functional components.
+- Keep API calls inside services/api.ts.
+- Do not use any.
+- Use proper TypeScript typing.
+- Handle loading and error states.
+
+UI Requirements:
+Display something similar to:
+
+Detected Objects
+
+Total Detections: 3
+
+---------------------------------------------------------
+| Class ID | Class Name | Confidence | Bounding Box      |
+---------------------------------------------------------
+| 2        | car        | 0.98       | [120,45,330,220] |
+| 3        | motorcycle | 0.95       | [420,80,520,240] |
+---------------------------------------------------------
+
+Constraints:
+- Do not implement video detection.
+- Do not implement tracking.
+- Do not implement databases.
+- Do not implement authentication.
+- Keep the code modular and beginner-friendly.
+- Add comments explaining how YOLO results are converted into JSON.
