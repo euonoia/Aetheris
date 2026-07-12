@@ -2,3 +2,4 @@ Django>=4.2,<5
 mysqlclient>=2.1
 django-environ>=0.10.0
 gunicorn>=21.2
+uvicorn[standard]==0.30.6
