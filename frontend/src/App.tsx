@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { api } from "./services/api";
 import type { DetectionResponse } from "./types/api";
+import { Button } from "@/components/ui/button"
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -60,9 +61,9 @@ function App() {
       <br />
       <br />
 
-      <button onClick={handleUpload} disabled={loading}>
+      <Button className="uploadBtn" onClick={handleUpload} disabled={loading}>
         {loading ? "Uploading..." : "Upload"}
-      </button>
+      </Button>
 
       {result && (
         <div style={{ marginTop: "1.5rem" }}>
