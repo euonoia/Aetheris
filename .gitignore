@@ -4,9 +4,11 @@ __pycache__/
 *.sqlite3
 *.env
 *key
-*.venv
+*venv
 env/
-
+*uploads
+*outputs
+backend/yolov8n.pt
 
 # Node
 node_modules/
