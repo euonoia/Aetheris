@@ -2,6 +2,8 @@ import { useState } from "react";
 import { api } from "./services/api";
 import type { DetectionResponse } from "./types/api";
 import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
+import { ViolationRecordingPage } from "@/pages/ViolationRecordingPage";
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -44,18 +46,18 @@ function App() {
 
       <div style={{ marginTop: "1rem" }}>
         <label>
-          Confidence threshold: {threshold.toFixed(2)}
-          <br />
-          <input
-            type="range"
-            min={0.25}
-            max={1}
-            step={0.01}
-            value={threshold}
-            onChange={(e) => setThreshold(Number(e.target.value))}
-            style={{ width: "100%" }}
-          />
-        </label>
+            Confidence threshold: {threshold.toFixed(2)}
+            <br />
+            
+            <Slider
+              value={threshold}
+              min={0.25}
+              max={1}
+              step={0.01}
+              className="slider"
+              onValueChange={(value) => setThreshold(Array.isArray(value) ? value[0] : value)}
+            />
+          </label>
       </div>
 
       <br />
@@ -118,6 +120,7 @@ function App() {
           </div>
         </div>
       )}
+      <ViolationRecordingPage/>
     </div>
   );
 }
