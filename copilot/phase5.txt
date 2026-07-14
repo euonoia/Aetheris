@@ -1,0 +1,246 @@
+I am building a professional Traffic Monitoring System inspired by NCAP (No Contact Apprehension Program).
+
+IMPORTANT:
+This is NOT a violation detection system yet.
+
+The application should ONLY monitor and track vehicles.
+
+Current Stack
+-------------
+Frontend
+- React
+- Vite
+- TypeScript
+
+Backend
+- FastAPI
+- OpenCV
+- Ultralytics YOLOv8
+- ByteTrack (YOLO model.track)
+
+Current Features
+----------------
+✅ Image Detection
+✅ Video Detection
+✅ Vehicle Filtering
+✅ Vehicle Statistics
+✅ Vehicle Tracking with ByteTrack
+✅ Tracking IDs
+✅ Background Processing
+✅ Progress Polling
+
+Now I want to transform the application into a professional Traffic Monitoring Dashboard similar to an NCAP operator screen.
+
+Objectives
+----------
+Create a clean monitoring interface that allows an operator to upload a CCTV video and monitor detected vehicles throughout processing.
+
+This system is for monitoring only.
+
+Do NOT implement:
+- violation detection
+- red light detection
+- illegal parking detection
+- lane violation
+- speed estimation
+- OCR / license plate recognition
+- ticket generation
+- face recognition
+
+Only implement vehicle monitoring.
+
+Backend Requirements
+--------------------
+
+Continue using:
+
+model.track(
+    frame,
+    persist=True,
+    tracker="bytetrack.yaml"
+)
+
+Track only:
+
+- Car
+- Motorcycle
+- Bus
+- Truck
+
+For every tracked vehicle maintain:
+
+- tracking ID
+- vehicle class
+- confidence
+- current bounding box
+- first frame seen
+- last frame seen
+- total frames tracked
+
+Create a monitoring summary containing:
+
+- Total unique vehicles
+- Cars
+- Motorcycles
+- Buses
+- Trucks
+
+Continue generating an annotated MP4.
+
+Return:
+
+{
+    "job_id": "...",
+    "video_url": "...",
+    "processing_time": "...",
+    "total_frames": ...,
+    "unique_vehicle_count": ...,
+    "vehicle_statistics": {...}
+}
+
+Frontend Requirements
+---------------------
+
+Create a professional dashboard.
+
+Layout
+
+----------------------------------------------------
+Traffic Monitoring Dashboard
+----------------------------------------------------
+
+Video Upload
+
+Processing Status
+
+Progress Bar
+
+Current Frame
+
+Elapsed Time
+
+Processing FPS
+
+Vehicle Statistics
+
+Cars
+
+Motorcycles
+
+Buses
+
+Trucks
+
+Current Active Tracks
+
+Track ID
+Vehicle Type
+Confidence
+
+Processed Video
+
+----------------------------------------------------
+
+While processing:
+
+Poll the backend every second.
+
+Update:
+
+- progress
+- current frame
+- processing FPS
+- active tracked IDs
+- statistics
+
+When processing finishes:
+
+Automatically display the processed tracking video.
+
+Video Display
+-------------
+
+The processed video should show:
+
+Green bounding boxes
+
+Vehicle class
+
+Tracking ID
+
+Confidence
+
+Example
+
+Car #12
+97%
+
+Truck #4
+95%
+
+Motorcycle #18
+91%
+
+Dashboard Style
+---------------
+
+Use a modern monitoring interface.
+
+Dark theme.
+
+Cards.
+
+Responsive layout.
+
+Large statistics cards.
+
+Professional typography.
+
+Think of an operator monitoring center.
+
+Use React functional components.
+
+Use TypeScript interfaces.
+
+Keep API logic inside services/api.ts.
+
+Project Structure
+-----------------
+
+src/
+
+components/
+    Dashboard.tsx
+    UploadCard.tsx
+    ProgressCard.tsx
+    VehicleStats.tsx
+    ActiveTracks.tsx
+    VideoPlayer.tsx
+
+pages/
+    MonitoringPage.tsx
+
+services/
+    api.ts
+
+types/
+    tracking.ts
+
+Requirements
+------------
+
+Keep everything modular.
+
+Do not use "any".
+
+Use reusable components.
+
+Add comments explaining important logic.
+
+Do not implement live webcam streaming.
+
+Do not implement violations.
+
+Do not implement OCR.
+
+This phase is only an intelligent vehicle monitoring system.

@@ -1,0 +1,17 @@
+Inspect my current /track-video implementation.
+
+Do not create a new implementation.
+
+Review the existing code line by line and identify why the generated MP4 is corrupted.
+
+Specifically verify:
+- VideoCapture initialization
+- VideoWriter initialization
+- Frame dimensions
+- FPS
+- Codec
+- writer.write()
+- writer.release()
+- cap.release()
+
+Explain the exact issue you find and modify only the necessary lines to produce a valid playable MP4 while preserving the existing functionality.

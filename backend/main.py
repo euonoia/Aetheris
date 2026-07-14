@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, HTTPException, UploadFile, Form
+from fastapi import FastAPI, File, HTTPException, UploadFile, Form, BackgroundTasks, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
@@ -6,7 +6,15 @@ import shutil
 import uuid
 import uvicorn
 
-from app.services.detector import detect_image as run_yolo_detection
+from app.services.detector import (
+    detect_image as run_yolo_detection,
+    detect_video as run_yolo_video_detection,
+    track_video as run_yolo_video_tracking,
+)
+from app.jobs import job_store
+from app.services.websocket_manager import ws_manager
+from app.core.config import ensure_dirs, UPLOAD_DIR, OUTPUT_DIR
+from app.api import detection, tracking, upload
 
 app = FastAPI(title="YOLO Vehicle Detector API")
 
@@ -19,15 +27,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "app", "uploads")
-OUTPUT_DIR = os.path.join(BASE_DIR, "app", "outputs")
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+ensure_dirs()
 
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
+
+# Register routers from app.api
+app.include_router(detection.router)
+app.include_router(tracking.router)
+app.include_router(upload.router)
 
 
 @app.get("/")
@@ -35,37 +43,57 @@ def root():
     return {"message": "Backend is running"}
 
 
-def save_uploaded_image(file: UploadFile) -> str:
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="No file provided")
+# File uploads are handled by utilities in app.utils.file_utils
 
-    if file.content_type and not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Only image files are supported")
 
-    extension = os.path.splitext(file.filename)[1] or ".bin"
-    filename = f"{uuid.uuid4().hex}{extension}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
+def run_tracking_job(job_id: str, video_path: str, confidence_threshold: float) -> None:
+    """
+    Background worker for a tracking job.
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    Job lifecycle:
+    1. queued   -> job created, waiting to start
+    2. processing -> frames are being tracked
+    3. completed -> output video is ready
+    4. failed    -> an error stopped processing
+    """
+    job_store.update_job(job_id, status="processing")
 
-    return filename
+    def on_progress(progress: dict) -> None:
+        job_store.update_job(job_id, **progress)
+
+    try:
+        metadata, _output_path = run_yolo_video_tracking(
+            video_path,
+            confidence_threshold=confidence_threshold,
+            job_id=job_id,
+            on_progress=on_progress,
+        )
+
+        job_store.update_job(
+            job_id,
+            status="completed",
+            progress_percentage=100.0,
+            current_frame=metadata["total_frames"],
+            total_frames=metadata["total_frames"],
+            elapsed_processing_time=metadata["processing_time"],
+            unique_tracked_vehicle_ids=metadata["tracked_vehicle_ids"],
+            vehicle_statistics=metadata["vehicle_statistics"],
+            video_url=metadata["video_url"],
+            active_tracked_vehicles=[],
+            active_tracked_vehicle_details=[],
+        )
+    except Exception as exc:
+        job_store.update_job(job_id, status="failed", error=str(exc))
 
 
 @app.post("/detect-image")
 async def detect_image(file: UploadFile = File(...), threshold: float = Form(0.25)):
-    """Endpoint accepts an image upload and an optional confidence `threshold` form field.
-
-    The threshold defaults to 0.25 and is forwarded to the detector to filter vehicle detections.
-    """
-    filename = save_uploaded_image(file)
-
+    """Accept an uploaded image and return annotated vehicle detections."""
+    filename = save_uploaded_file(file, ["image/"], "Only image files are supported")
     uploaded_path = os.path.join(UPLOAD_DIR, filename)
 
-    # Run detection with the provided confidence threshold
     detections, output_path = run_yolo_detection(uploaded_path, confidence_threshold=threshold)
 
-    # Compute vehicle statistics
     vehicle_stats = {"car": 0, "motorcycle": 0, "bus": 0, "truck": 0}
     for d in detections:
         key = d.get("class_name")
@@ -81,6 +109,63 @@ async def detect_image(file: UploadFile = File(...), threshold: float = Form(0.2
         "vehicle_statistics": vehicle_stats,
         "detections": detections,
     }
+
+
+@app.post("/detect-video")
+async def detect_video(file: UploadFile = File(...), threshold: float = Form(0.25)):
+    """Accept an uploaded video and return annotated vehicle statistics."""
+    filename = save_uploaded_file(file, ["video/"], "Only video files are supported")
+    uploaded_path = os.path.join(UPLOAD_DIR, filename)
+
+    metadata, output_path = run_yolo_video_detection(uploaded_path, confidence_threshold=threshold)
+
+    return metadata
+
+
+@app.post("/track-video")
+async def track_video(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    threshold: float = Form(0.25),
+):
+    """
+    Accept an uploaded video and start background vehicle tracking.
+
+    Returns a job ID immediately. Poll GET /tracking-status/{job_id} for progress.
+    """
+    filename = save_uploaded_file(file, ["video/"], "Only video files are supported")
+    uploaded_path = os.path.join(UPLOAD_DIR, filename)
+
+    job_id = uuid.uuid4().hex
+    job_store.create_job(job_id, filename)
+    background_tasks.add_task(run_tracking_job, job_id, uploaded_path, threshold)
+
+    return {"job_id": job_id}
+
+
+@app.get("/tracking-status/{job_id}")
+def get_tracking_status(job_id: str):
+    """Return live tracking progress and statistics for a background job."""
+    job = job_store.get_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Tracking job not found")
+
+    return job
+
+
+@app.websocket("/ws/tracking/{job_id}")
+async def websocket_tracking(job_id: str, websocket: WebSocket):
+    """Accept a WebSocket connection for live frame updates while a tracking job runs."""
+    if job_store.get_job(job_id) is None:
+        await websocket.close(code=1008)
+        return
+
+    await ws_manager.connect(job_id, websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        ws_manager.disconnect(job_id, websocket)
 
 
 @app.post("/upload")
