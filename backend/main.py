@@ -11,8 +11,10 @@ from app.services.detector import (
     detect_video as run_yolo_video_detection,
     track_video as run_yolo_video_tracking,
 )
-from app.services import job_store
+from app.jobs import job_store
 from app.services.websocket_manager import ws_manager
+from app.core.config import ensure_dirs, UPLOAD_DIR, OUTPUT_DIR
+from app.api import detection, tracking, upload
 
 app = FastAPI(title="YOLO Vehicle Detector API")
 
@@ -25,15 +27,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "app", "uploads")
-OUTPUT_DIR = os.path.join(BASE_DIR, "app", "outputs")
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+ensure_dirs()
 
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
+
+# Register routers from app.api
+app.include_router(detection.router)
+app.include_router(tracking.router)
+app.include_router(upload.router)
 
 
 @app.get("/")
@@ -41,21 +43,7 @@ def root():
     return {"message": "Backend is running"}
 
 
-def save_uploaded_file(file: UploadFile, allowed_prefixes: list[str], error_detail: str) -> str:
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="No file provided")
-
-    if not file.content_type or not any(file.content_type.startswith(prefix) for prefix in allowed_prefixes):
-        raise HTTPException(status_code=400, detail=error_detail)
-
-    extension = os.path.splitext(file.filename)[1] or ".bin"
-    filename = f"{uuid.uuid4().hex}{extension}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    return filename
+# File uploads are handled by utilities in app.utils.file_utils
 
 
 def run_tracking_job(job_id: str, video_path: str, confidence_threshold: float) -> None:
