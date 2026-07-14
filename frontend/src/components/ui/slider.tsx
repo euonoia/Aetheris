@@ -2,42 +2,54 @@ import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 
 import { cn } from "@/lib/utils"
 
+type SliderProps = Omit<SliderPrimitive.Root.Props, "value" | "defaultValue" | "onValueChange"> & {
+  value?: number | number[]
+  defaultValue?: number | number[]
+  onValueChange?: (value: number[]) => void
+}
+
 function Slider({
   className,
   defaultValue,
   value,
   min = 0,
   max = 100,
+  onValueChange,
   ...props
-}: SliderPrimitive.Root.Props) {
-  const _values = Array.isArray(value)
-    ? value
-    : Array.isArray(defaultValue)
-      ? defaultValue
+}: SliderProps) {
+  const normalizedValue = value !== undefined
+    ? Array.isArray(value) ? value : [value]
+    : defaultValue !== undefined
+      ? Array.isArray(defaultValue) ? defaultValue : [defaultValue]
       : [min, max]
+
+  const normalizedDefaultValue = defaultValue !== undefined
+    ? Array.isArray(defaultValue) ? defaultValue : [defaultValue]
+    : undefined
 
   return (
     <SliderPrimitive.Root
-      className={cn("data-horizontal:w-full data-vertical:h-full", className)}
+      className={cn("w-full", className)}
       data-slot="slider"
-      defaultValue={defaultValue}
-      value={value}
+      defaultValue={normalizedDefaultValue}
+      value={normalizedValue}
       min={min}
       max={max}
+      onValueChange={onValueChange}
       thumbAlignment="edge"
       {...props}
     >
       <SliderPrimitive.Control className="relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:min-h-40 data-vertical:w-auto data-vertical:flex-col">
         <SliderPrimitive.Track
           data-slot="slider-track"
-          className="relative grow overflow-hidden rounded-full bg-muted select-none data-horizontal:h-1.5 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.5"
+          className="relative h-2 grow overflow-hidden rounded-full bg-muted/80 select-none data-horizontal:h-2 data-horizontal:w-full data-vertical:h-full data-vertical:w-2"
         >
           <SliderPrimitive.Indicator
             data-slot="slider-range"
-            className="bg-primary select-none data-horizontal:h-full data-vertical:w-full"
+            className="absolute inset-y-0 left-0 rounded-full bg-accent select-none data-horizontal:h-full data-vertical:w-full"
           />
         </SliderPrimitive.Track>
-        {Array.from({ length: _values.length }, (_, index) => (
+        {Array.from({ length: normalizedValue.length }, (_, index) => (
           <SliderPrimitive.Thumb
             data-slot="slider-thumb"
             key={index}

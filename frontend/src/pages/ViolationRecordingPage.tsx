@@ -62,7 +62,7 @@ export function ViolationRecordingPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Traffic Violation Recording"
+        title="YOLO Vehicle Detector"
         description="Live YOLOv8 detection feed and automated evidence review"
         actions={
           <Select value={camera} onValueChange={(value) => value && setCamera(value)}>
@@ -135,6 +135,32 @@ export function ViolationRecordingPage() {
                 <p className="font-display text-lg font-bold">91.7%</p>
               </div>
             </div>
+            <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-end">
+              <div className="min-w-0 flex-1">
+                <label className="mb-2 block text-sm font-medium text-foreground">
+                    Confidence threshold: {threshold.toFixed(2)}
+                </label>
+                <Slider
+                    value={threshold}
+                    min={0.25}
+                    max={1}
+                    step={0.01}
+                    className="w-full"
+                    onValueChange={(value) => setThreshold(Array.isArray(value) ? value[0] : value)}
+                />
+              </div>
+                <label className="border-1 p-2 rounded-md bg-background shadow-xs hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50">
+                        <span>{file ? file.name : "Choose file"}</span>
+                        <input
+                            type="file"
+                            className="sr-only"
+                            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                        />
+                </label>
+                <Button className="uploadBtn" onClick={handleUpload} disabled={loading}>
+                    {loading ? "Uploading..." : "Upload"}
+                </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -197,7 +223,7 @@ export function ViolationRecordingPage() {
               <button
                 key={v.id}
                 onClick={() => setSelectedId(v.id)}
-                className={`flex w-full items-center gap-3 rounded-md px-2 py-2.5 text-left transition-colors ${selectedId === v.id ? "bg-primary/10" : "hover:bg-secondary/50"}`}
+                className={`flex w-full items-center gap-3 rounded-md px-2 py-2.5 text-left transition-colors ${selectedId === v.id ? "bg-primary/20" : "hover:bg-secondary/60"}`}
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary">
                   <Camera className="h-4 w-4 text-muted-foreground" />
@@ -224,7 +250,7 @@ export function ViolationRecordingPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-2">
               {Array.from({ length: selected.evidenceImages }).map((_, i) => (
-                <div key={i} className="relative flex aspect-video items-center justify-center rounded-md border border-border bg-secondary/60">
+                <div key={i} className="relative flex aspect-video items-center justify-center rounded-md border border-border bg-primary/10">
                   <Camera className="h-5 w-5 text-muted-foreground" />
                   <span className="absolute bottom-1 right-1 rounded bg-black/60 px-1 text-[9px] text-white">EVID-{i + 1}</span>
                 </div>

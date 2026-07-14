@@ -40,7 +40,7 @@ function App() {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>YOLO Vehicle Detector</h1>
+      {/* <h1>YOLO Vehicle Detector</h1>
 
       <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
 
@@ -57,7 +57,7 @@ function App() {
               className="slider"
               onValueChange={(value) => setThreshold(Array.isArray(value) ? value[0] : value)}
             />
-          </label>
+        </label>
       </div>
 
       <br />
@@ -119,7 +119,7 @@ function App() {
             </table>
           </div>
         </div>
-      )}
+      )} */}
       <ViolationRecordingPage/>
     </div>
   );

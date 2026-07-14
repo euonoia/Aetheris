@@ -5,7 +5,7 @@ export function ViolationStatusBadge({ status }: { status: ViolationStatus }) {
     const map: Record<ViolationStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" | "link" | "ghost" }> = {
         detected: { label: "Detected", variant: "outline" },
         under_review: { label: "Under Review", variant: "outline" },
-        citation_issued: { label: "Citation Issued", variant: "default" },
+        citation_issued: { label: "Citation Issued", variant: "secondary" },
         dismissed: { label: "Dismissed", variant: "secondary" },
     };
     const m = map[status];
