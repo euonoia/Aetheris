@@ -1,0 +1,202 @@
+I am building a professional AI Traffic Monitoring System using:
+
+Backend
+- FastAPI
+- OpenCV
+- Ultralytics YOLOv8
+- ByteTrack
+
+Frontend
+- React
+- Vite
+- TypeScript
+
+Current Features
+----------------
+✅ Image Detection
+✅ Video Detection
+✅ Vehicle Tracking
+✅ Background Processing
+✅ Job Polling
+✅ Tracking Statistics
+✅ H.264 Output Video
+✅ Professional Monitoring Dashboard
+
+Current Problem
+---------------
+The frontend only receives the finished video after processing completes.
+
+I want to upgrade the application into a real-time traffic monitoring system similar to an NCAP operator dashboard.
+
+Goal
+----
+While the backend is processing the uploaded video, the frontend should receive annotated frames continuously and display them as a live monitoring feed.
+
+The final MP4 should still be generated after processing finishes.
+
+Backend Requirements
+--------------------
+
+Keep the current background job architecture.
+
+Create a FastAPI WebSocket endpoint:
+
+/ws/tracking/{job_id}
+
+Inside the tracking loop:
+
+For every processed frame:
+
+- Run YOLOv8 tracking.
+- Draw:
+    - Bounding boxes
+    - Vehicle class
+    - Tracking ID
+    - Confidence
+
+Encode the annotated frame using:
+
+cv2.imencode(".jpg", frame)
+
+Convert to Base64.
+
+Send through the WebSocket.
+
+Example message:
+
+{
+    "frame": "<base64 jpeg>",
+    "frame_number": 245,
+    "processing_fps": 21.5,
+    "active_tracks": [...],
+    "vehicle_statistics": {...},
+    "progress": 48
+}
+
+Continue writing every frame to the output MP4.
+
+Do not remove the existing progress tracking.
+
+Keep the existing polling endpoint because React will still use it for job completion.
+
+Frontend Requirements
+---------------------
+
+Create a reusable WebSocket hook.
+
+Connect to:
+
+ws://localhost:8000/ws/tracking/{job_id}
+
+Whenever a new frame arrives:
+
+Decode the Base64 JPEG.
+
+Display it inside a responsive video container.
+
+Update:
+
+- Current frame
+- Processing FPS
+- Progress
+- Active tracking IDs
+- Vehicle statistics
+
+When processing completes:
+
+- Close the WebSocket.
+- Replace the live feed with the final processed MP4.
+- Continue displaying statistics.
+
+Dashboard Layout
+----------------
+
+--------------------------------------------------
+
+Traffic Monitoring Dashboard
+
+--------------------------------------------------
+
+Upload Video
+
+LIVE MONITOR
+
++--------------------------------------------+
+
+(Live annotated frame)
+
++--------------------------------------------+
+
+Progress
+
+Current Frame
+
+Processing FPS
+
+Elapsed Time
+
+Vehicle Statistics
+
+Cars
+
+Motorcycles
+
+Bus
+
+Truck
+
+Currently Active Vehicles
+
+ID
+
+Vehicle Type
+
+Confidence
+
+Final Processed Video
+
+--------------------------------------------------
+
+UI Requirements
+---------------
+
+Use a modern dark theme.
+
+Create reusable React components.
+
+Use TypeScript interfaces.
+
+Do not use any.
+
+Keep all API logic inside services/api.ts.
+
+Create:
+
+hooks/useTrackingSocket.ts
+
+for WebSocket management.
+
+Use automatic reconnect if the socket disconnects unexpectedly.
+
+Constraints
+-----------
+
+Do not use polling for image updates.
+
+Only use WebSockets for live frames.
+
+Continue using polling only for job metadata if necessary.
+
+Do not implement webcam streaming.
+
+Do not implement traffic violations.
+
+Do not implement OCR.
+
+Do not implement license plate recognition.
+
+Do not implement speed estimation.
+
+This phase is only for professional real-time vehicle monitoring.
+
+Keep the implementation modular, production-like, and beginner-friendly.
