@@ -1,0 +1,78 @@
+I have completed the learning phase of my YOLOv8 project.
+
+Now I want to clean my React frontend into a single professional Traffic Monitoring Dashboard.
+
+Important:
+Do not change the backend.
+
+Only refactor the frontend.
+
+Current Features
+----------------
+
+The frontend still contains learning pages such as:
+
+- Image Detection
+- Video Detection
+- Test Components
+- Demo Upload Pages
+- Temporary Debug Components
+
+These are no longer needed.
+
+Goal
+----
+
+Transform the frontend into a production-style operator dashboard.
+
+Keep only one page:
+
+DashboardPage
+
+The dashboard should contain:
+
+- Upload CCTV Video
+- Live Monitoring Feed (WebSocket)
+- Progress Bar
+- Current Frame
+- Processing FPS
+- Vehicle Statistics
+- Active Tracked Vehicles
+- Final Processed Video
+
+Remove:
+
+- Image Detection pages
+- Video Detection pages
+- Temporary test pages
+- Duplicate upload components
+- Unused routes
+- Dead code
+- Unused imports
+- Unused interfaces
+
+Keep only the components required by the dashboard.
+
+Reorganize the project into:
+
+src/
+    api/
+    components/
+        dashboard/
+        common/
+    hooks/
+    pages/
+    services/
+    types/
+
+Use React functional components.
+
+Use TypeScript interfaces.
+
+Do not use any.
+
+Do not change the backend endpoints.
+
+Keep all existing functionality.
+
+The final application should immediately open to the Traffic Monitoring Dashboard and behave like a professional traffic monitoring operator system rather than a YOLO demonstration.

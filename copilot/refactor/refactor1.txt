@@ -1,0 +1,104 @@
+I want to refactor my YOLOv8 Traffic Monitoring project into a clean, production-style architecture.
+
+Important:
+This is a refactor only.
+
+Do NOT change the application's behavior.
+
+All current functionality must continue working exactly the same.
+
+Current Features
+----------------
+
+- FastAPI
+- YOLOv8
+- ByteTrack
+- Video Detection
+- Vehicle Tracking
+- Live WebSocket Streaming
+- Progress Polling
+- Background Jobs
+- H.264 Video Generation
+- React Dashboard
+
+Goal
+----
+
+Refactor the project into a modular architecture following the Single Responsibility Principle.
+
+Backend
+
+Create folders:
+
+app/
+
+core/
+api/
+services/
+jobs/
+models/
+utils/
+
+Requirements
+
+Move API endpoints into routers.
+
+Keep main.py minimal.
+
+Separate:
+
+- image detection
+- video detection
+- vehicle tracking
+- websocket streaming
+- ffmpeg transcoding
+- OpenCV drawing
+- vehicle statistics
+
+Each service should have one responsibility.
+
+Create reusable utility functions.
+
+Avoid duplicated code.
+
+Frontend
+
+Reorganize src/
+
+api/
+
+components/
+
+hooks/
+
+pages/
+
+types/
+
+utils/
+
+Split large React components into smaller reusable components.
+
+Move API calls into api/.
+
+Move WebSocket logic into hooks/.
+
+Move interfaces into types/.
+
+Keep pages responsible only for layout.
+
+General Requirements
+
+- Preserve all existing functionality.
+- Do not rewrite working logic unnecessarily.
+- Do not change endpoints unless required for organization.
+- Do not change the UI behavior.
+- Use TypeScript interfaces.
+- Do not use any.
+- Keep comments where they improve readability.
+- Remove dead code and unused imports.
+- Improve naming consistency.
+- Keep the project beginner-friendly while following professional organization.
+
+Goal:
+Produce a clean, scalable codebase that is easy to extend with future features such as line crossing, vehicle counting, violation detection, and OCR without requiring major restructuring.

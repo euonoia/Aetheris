@@ -1,0 +1,90 @@
+===================================================================
+COPILOT DOCUMENTATION PROMPT TEMPLATE
+Purpose: Reusable prompt for documenting frontend & backend changes
+===================================================================
+
+HOW TO USE THIS TEMPLATE:
+1. Copy the "PROMPT TO PASTE INTO COPILOT" section below.
+2. Fill in the bracketed [placeholders] with your actual details.
+3. Paste it into Copilot Chat (in VS Code, or wherever you're working).
+4. Save Copilot's output into your Documents folder, e.g.:
+   /Documents/YYYY-MM-DD_feature-name.md
+5. Reuse this same template for every future entry so all your
+   documentation stays consistent.
+
+-------------------------------------------------------------------
+PROMPT TO PASTE INTO COPILOT
+-------------------------------------------------------------------
+
+You are my technical documentation assistant. Generate clear, 
+well-structured documentation based on the details I provide below. 
+Follow this exact format so my documentation stays consistent across 
+entries.
+
+CONTEXT:
+- Project name: [PROJECT NAME]
+- Date: [DATE]
+- Feature/Task: [SHORT DESCRIPTION OF WHAT WAS BUILT OR CHANGED]
+- Type of change: [New feature / Bug fix / Refactor / Integration / Other]
+
+FRONTEND CHANGES:
+- Framework/library used: [e.g. React, Vue, Angular]
+- Files/components affected: [list files or components]
+- What changed: [describe UI/UX changes, new components, state 
+  management, API calls added, etc.]
+- Screenshots or references (optional): [describe or link]
+
+BACKEND CHANGES:
+- Language/framework used: [e.g. Node.js/Express, Django, .NET]
+- Files/modules affected: [list files or modules]
+- What changed: [describe new endpoints, database changes, 
+  business logic, middleware, etc.]
+- API endpoints added/modified: [method, route, request/response 
+  shape]
+
+DATABASE CHANGES (if any):
+- Tables/collections affected: [list]
+- Migration/schema changes: [describe]
+
+TESTING:
+- How this was tested: [manual, unit tests, integration tests]
+- Known issues or edge cases: [list, or write "None"]
+
+INSTRUCTIONS FOR OUTPUT:
+Please format the documentation using the following structure:
+
+1. Title (Feature/Task name + date)
+2. Summary (2-3 sentence overview of what this change does and why)
+3. Frontend Changes (bullet points)
+4. Backend Changes (bullet points)
+5. API Reference (table: Method | Endpoint | Description | Request | Response)
+6. Database Changes (if applicable)
+7. Testing Notes
+8. Known Issues / TODOs
+9. Related Files (list of file paths touched)
+
+Use Markdown formatting with proper headers (##), bullet points, 
+and code blocks for any code snippets, API payloads, or commands. 
+Keep the tone clear and professional, suitable for a technical 
+knowledge base that other developers (or future me) will read.
+
+-------------------------------------------------------------------
+TIPS FOR CONSISTENT FUTURE USE
+-------------------------------------------------------------------
+- Keep this .txt file in your Documents folder as your "master 
+  template" — don't overwrite it, just copy from it each time.
+- Name each generated doc consistently, e.g.:
+  2026-07-14_login-page-redesign.md
+  2026-07-15_user-auth-api.md
+- If your project has a consistent tech stack, you can pre-fill the 
+  "Framework/library used" fields permanently in your own copy so 
+  you don't retype them every time.
+- For quick daily/weekly updates, you can shorten the prompt to just 
+  the CONTEXT + FRONTEND + BACKEND sections and skip DATABASE/TESTING 
+  if not relevant.
+- Ask Copilot to output in a code block (```) so copying the raw 
+  Markdown into your files is clean and easy.
+
+===================================================================
+END OF TEMPLATE
+===================================================================

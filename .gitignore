@@ -8,6 +8,7 @@ __pycache__/
 env/
 *uploads
 *outputs
+*backend/.pytest_cache
 backend/yolov8n.pt
 
 # Node
