@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { ThemeProvider } from "@/hooks/use-theme";
 import { api } from "./services/api";
 import type { DetectionResponse } from "./types/api";
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { ViolationRecordingPage } from "@/pages/ViolationRecordingPage";
+import LandingPage from "./pages/landing/LandingPage";
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -39,90 +42,95 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      {/* <h1>YOLO Vehicle Detector</h1>
-
-      <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-
-      <div style={{ marginTop: "1rem" }}>
-        <label>
-            Confidence threshold: {threshold.toFixed(2)}
-            <br />
-            
-            <Slider
-              value={threshold}
-              min={0.25}
-              max={1}
-              step={0.01}
-              className="slider"
-              onValueChange={(value) => setThreshold(Array.isArray(value) ? value[0] : value)}
-            />
-        </label>
-      </div>
-
-      <br />
-      <br />
-
-      <Button className="uploadBtn" onClick={handleUpload} disabled={loading}>
-        {loading ? "Uploading..." : "Upload"}
-      </Button>
-
-      {result && (
-        <div style={{ marginTop: "1.5rem" }}>
-          <h2>Processed Image</h2>
-          <img src={result.image_url} alt="Processed upload" width={800} style={{ maxWidth: "100%" }} />
-
-          <h3 style={{ marginTop: "1rem" }}>Detected Vehicles</h3>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1rem" }}>
-            <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
-              <strong>Cars</strong>
-              <div>{result.vehicle_statistics.car}</div>
-            </div>
-            <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
-              <strong>Motorcycles</strong>
-              <div>{result.vehicle_statistics.motorcycle}</div>
-            </div>
-            <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
-              <strong>Buses</strong>
-              <div>{result.vehicle_statistics.bus}</div>
-            </div>
-            <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
-              <strong>Trucks</strong>
-              <div>{result.vehicle_statistics.truck}</div>
-            </div>
-            <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
-              <strong>Total</strong>
-              <div>{result.total_vehicle_detections}</div>
-            </div>
-          </div>
-
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Class ID</th>
-                  <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Class Name</th>
-                  <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Confidence</th>
-                  <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Bounding Box</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.detections.map((d, idx) => (
-                  <tr key={idx}>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>{d.class_id}</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>{d.class_name}</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>{d.confidence.toFixed(2)}</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>[{d.bounding_box.join(", ")}]</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )} */}
-      <ViolationRecordingPage/>
-    </div>
-  );
+    <ThemeProvider>
+        <Router>
+        <LandingPage />
+        </Router>
+    </ThemeProvider>
+    );
 }
 
 export default App;
+
+/*
+{/* <h1>YOLO Vehicle Detector</h1>
+
+    <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+
+    <div style={{ marginTop: "1rem" }}>
+    <label>
+        Confidence threshold: {threshold.toFixed(2)}
+        <br />
+        
+        <Slider
+            value={threshold}
+            min={0.25}
+            max={1}
+            step={0.01}
+            className="slider"
+            onValueChange={(value) => setThreshold(Array.isArray(value) ? value[0] : value)}
+        />
+    </label>
+    </div>
+
+    <br />
+    <br />
+
+    <Button className="uploadBtn" onClick={handleUpload} disabled={loading}>
+    {loading ? "Uploading..." : "Upload"}
+    </Button>
+
+    {result && (
+    <div style={{ marginTop: "1.5rem" }}>
+        <h2>Processed Image</h2>
+        <img src={result.image_url} alt="Processed upload" width={800} style={{ maxWidth: "100%" }} />
+
+        <h3 style={{ marginTop: "1rem" }}>Detected Vehicles</h3>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+        <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
+            <strong>Cars</strong>
+            <div>{result.vehicle_statistics.car}</div>
+        </div>
+        <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
+            <strong>Motorcycles</strong>
+            <div>{result.vehicle_statistics.motorcycle}</div>
+        </div>
+        <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
+            <strong>Buses</strong>
+            <div>{result.vehicle_statistics.bus}</div>
+        </div>
+        <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
+            <strong>Trucks</strong>
+            <div>{result.vehicle_statistics.truck}</div>
+        </div>
+        <div style={{ padding: "0.5rem 1rem", border: "1px solid #ddd", borderRadius: 6 }}>
+            <strong>Total</strong>
+            <div>{result.total_vehicle_detections}</div>
+        </div>
+        </div>
+
+        <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+            <tr>
+                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Class ID</th>
+                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Class Name</th>
+                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Confidence</th>
+                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left" }}>Bounding Box</th>
+            </tr>
+            </thead>
+            <tbody>
+            {result.detections.map((d, idx) => (
+                <tr key={idx}>
+                <td style={{ border: "1px solid #ddd", padding: "8px" }}>{d.class_id}</td>
+                <td style={{ border: "1px solid #ddd", padding: "8px" }}>{d.class_name}</td>
+                <td style={{ border: "1px solid #ddd", padding: "8px" }}>{d.confidence.toFixed(2)}</td>
+                <td style={{ border: "1px solid #ddd", padding: "8px" }}>[{d.bounding_box.join(", ")}]</td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+        </div>
+    </div>
+)} */
+    
