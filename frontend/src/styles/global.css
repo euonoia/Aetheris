@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+
+@layer base {
+  :root {
+    --background: 75 33% 98%;
+    --foreground: 102 14% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 102 14% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 102 14% 14%;
+
+    --primary: 24 100% 62%; /*orange*/
+    --primary-foreground: 0 0% 100%;/*plain white*/
+
+    --secondary: 130 40% 94%; /*light green*/
+    --secondary-foreground: 136 50% 22%; /*darker green*/
+
+    --muted: 130 30% 95%;
+    --muted-foreground: 109 8% 41%;
+
+    --accent: 136 50% 36%; /*green*/
+    --accent-foreground: 24 60% 18%;
+
+    --destructive: 6 63% 46%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 124 27% 89%;
+    --input: 124 27% 89%;
+    --ring: 136 50% 36%;
+
+    --radius: 0.65rem;
+
+    --chart-1: 136 50% 36%;
+    --chart-2: 24 100% 62%;
+    --chart-3: 199 60% 45%;
+    --chart-4: 45 90% 51%;
+    --chart-5: 262 45% 55%;
+
+    --success: 136 50% 36%;
+    --warning: 38 92% 50%;
+  }
+
+  .dark {
+    --background: 94 19% 7%;
+    --foreground: 100 27% 94%;
+
+    --card: 112 13% 12%;
+    --card-foreground: 100 27% 94%;
+
+    --popover: 112 13% 12%;
+    --popover-foreground: 100 27% 94%;
+
+    --primary: 139 39% 49%;
+    --primary-foreground: 132 33% 6%;
+
+    --secondary: 120 13% 15%;
+    --secondary-foreground: 139 39% 78%;
+
+    --muted: 120 13% 15%;
+    --muted-foreground: 124 8% 59%;
+
+    --accent: 24 100% 67%;
+    --accent-foreground: 24 60% 12%;
+
+    --destructive: 9 76% 57%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 120 10% 19%;
+    --input: 120 10% 19%;
+    --ring: 139 39% 49%;
+
+    --chart-1: 139 39% 49%;
+    --chart-2: 24 100% 67%;
+    --chart-3: 199 70% 55%;
+    --chart-4: 45 90% 58%;
+    --chart-5: 262 55% 68%;
+
+    --success: 139 39% 49%;
+    --warning: 38 92% 55%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  ::selection {
+    @apply bg-primary/20;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .bg-grid {
+    background-image: radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+}
