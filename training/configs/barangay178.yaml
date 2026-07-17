@@ -1,0 +1,25 @@
+data: ../datasets/barangay178_v1/data.yaml
+
+epochs: 50
+
+batch: 16
+
+imgsz: 640
+
+optimizer: AdamW
+
+learning_rate: 0.001
+
+workers: 4
+
+patience: 20
+
+device: 0
+
+cache: ram
+
+project: ../experiments
+
+experiment_name: experiment_001
+
+dataset_version: barangay178_v1

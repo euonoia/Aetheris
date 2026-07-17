@@ -7,11 +7,13 @@ import subprocess
 import time
 
 from app.services.websocket_manager import ws_manager
+from app.core.config import MODEL_PATH, OUTPUT_DIR, ensure_model_dirs
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-MODEL_PATH = os.path.join(BASE_DIR, "yolov8n.pt")
-OUTPUT_DIR = os.path.join(BASE_DIR, "app", "outputs")
+# Ensure model directories exist (creates models/pretrained and models/custom)
+ensure_model_dirs()
 
+# Load the model from configurable path. This allows swapping models without
+# editing detector code or changing API endpoints.
 model = YOLO(MODEL_PATH)
 
 VEHICLE_CLASSES = {2: "car", 3: "motorcycle", 5: "bus", 7: "truck"}

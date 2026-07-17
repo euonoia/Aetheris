@@ -1,0 +1,25 @@
+data: ../datasets/barangay178_night/data.yaml
+
+epochs: 80
+
+batch: 12
+
+imgsz: 640
+
+optimizer: AdamW
+
+learning_rate: 0.001
+
+workers: 4
+
+patience: 25
+
+device: 0
+
+cache: ram
+
+project: ../experiments
+
+experiment_name: experiment_night_001
+
+dataset_version: barangay178_night

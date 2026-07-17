@@ -1,28 +1,97 @@
+# =====================================================
 # Python
+# =====================================================
+
 __pycache__/
 *.py[cod]
-*.sqlite3
-*.env
-*key
-*venv
-env/
-*uploads
-*outputs
-*backend/.pytest_cache
-backend/yolov8n.pt
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
 
+.venv/
+venv/
+env/
+
+.env
+.env.*
+
+# =====================================================
+# Uploads / Outputs
+# =====================================================
+
+backend/app/uploads/
+backend/app/outputs/
+
+# =====================================================
+# YOLO Training Outputs
+# =====================================================
+
+runs/
+experiments/
+
+# =====================================================
+# Trained Models
+# =====================================================
+
+models/custom/*.pt
+models/archive/*.pt
+
+# Keep pretrained model tracked if desired
+# !models/pretrained/yolov8n.pt
+
+# =====================================================
+# Dataset Images & Labels
+# (Keep folder structure but ignore the data)
+# =====================================================
+
+datasets/**/train/images/
+datasets/**/train/labels/
+
+datasets/**/valid/images/
+datasets/**/valid/labels/
+
+datasets/**/test/images/
+datasets/**/test/labels/
+
+# =====================================================
+# Videos & Images
+# =====================================================
+
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# =====================================================
+# Logs
+# =====================================================
+
+*.log
+
+# =====================================================
 # Node
+# =====================================================
+
 node_modules/
+dist/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json*
 
-
-# Docker
-**/.dockerignore
-
+# =====================================================
 # IDE
-.vscode/
-.DS_Store
+# =====================================================
 
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
+
+# =====================================================
+# Docker
+# =====================================================
+
+.dockerignore
