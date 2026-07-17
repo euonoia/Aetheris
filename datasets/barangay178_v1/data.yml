@@ -1,0 +1,14 @@
+path: ../datasets/barangay178_v1
+
+train: train/images
+val: valid/images
+test: test/images
+
+names:
+  0: car
+  1: motorcycle
+  2: bus
+  3: truck
+  4: jeepney
+  5: tricycle
+  6: van

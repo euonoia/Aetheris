@@ -5,3 +5,7 @@ python-dotenv
 ultralytics
 torch
 torchvision
+matplotlib
+seaborn
+pandas
+tqdm
