@@ -1,21 +1,3 @@
-===================================================================
-COPILOT DOCUMENTATION PROMPT TEMPLATE
-Purpose: Reusable prompt for documenting frontend & backend changes
-===================================================================
-
-HOW TO USE THIS TEMPLATE:
-1. Copy the "PROMPT TO PASTE INTO COPILOT" section below.
-2. Fill in the bracketed [placeholders] with your actual details.
-3. Paste it into Copilot Chat (in VS Code, or wherever you're working).
-4. Save Copilot's output into your Documents folder, e.g.:
-   /Documents/YYYY-MM-DD_feature-name.md
-5. Reuse this same template for every future entry so all your
-   documentation stays consistent.
-
--------------------------------------------------------------------
-PROMPT TO PASTE INTO COPILOT
--------------------------------------------------------------------
-
 You are my technical documentation assistant. Generate clear, 
 well-structured documentation based on the details I provide below. 
 Follow this exact format so my documentation stays consistent across 
