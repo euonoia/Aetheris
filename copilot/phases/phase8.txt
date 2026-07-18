@@ -1,0 +1,524 @@
+I am building an AI Traffic Monitoring System for Barangay 178, North Caloocan City, Philippines.
+
+Current Stack
+-------------
+
+Backend
+- FastAPI
+- Python
+- OpenCV
+- Ultralytics YOLOv8
+- ByteTrack
+
+Frontend
+- React
+- Vite
+- TypeScript
+
+Current Features
+----------------
+
+✅ Vehicle Detection
+✅ Vehicle Tracking
+✅ Live Monitoring Dashboard
+✅ WebSocket Streaming
+✅ Transfer Learning
+✅ Model Registry
+✅ Experiment Tracking
+✅ Configurable Training Pipeline
+
+Now I want to implement Phase 8C.
+
+====================================================
+
+GOAL
+
+====================================================
+
+Build a Dataset Engineering Toolkit that automates the preparation of datasets for YOLOv8 transfer learning.
+
+This toolkit is NOT part of the production backend.
+
+It is a standalone research tool used before training.
+
+Its purpose is to transform raw CCTV or dashcam videos into clean, organized datasets suitable for annotation and training.
+
+====================================================
+
+PROJECT STRUCTURE
+
+====================================================
+
+Create a new folder:
+
+dataset_tools/
+
+    frame_extractor/
+
+    duplicate_detector/
+
+    blur_detector/
+
+    dataset_organizer/
+
+    metadata/
+
+    ui/
+
+    utils/
+
+Keep this toolkit completely separate from:
+
+backend/
+
+frontend/
+
+training/
+
+Do NOT modify the existing FastAPI API.
+
+Do NOT modify the React Dashboard.
+
+Do NOT modify ByteTrack.
+
+====================================================
+
+FRAME EXTRACTION
+
+====================================================
+
+Create a frame extraction application.
+
+Features:
+
+• Select a video file
+• Preview the selected video
+• Display:
+
+    filename
+
+    resolution
+
+    FPS
+
+    duration
+
+    codec
+
+• Choose an output folder
+
+Extraction Options:
+
+• Every X frames
+
+• Every X seconds
+
+Example:
+
+Extract one frame every second.
+
+Output:
+
+rain_000001.jpg
+
+rain_000002.jpg
+
+rain_000003.jpg
+
+Generate filenames automatically.
+
+Support:
+
+MP4
+
+AVI
+
+MOV
+
+MKV
+
+====================================================
+
+VIDEO INFORMATION PANEL
+
+====================================================
+
+Display:
+
+Total Frames
+
+FPS
+
+Width
+
+Height
+
+Duration
+
+Estimated Output Images
+
+Example:
+
+Video Duration:
+3 minutes
+
+FPS:
+30
+
+Extraction Interval:
+1 second
+
+Estimated Images:
+180
+
+====================================================
+
+PROGRESS SYSTEM
+
+====================================================
+
+Display:
+
+Current Frame
+
+Frames Processed
+
+Percentage
+
+Elapsed Time
+
+Estimated Remaining Time
+
+Provide:
+
+Start
+
+Pause
+
+Resume
+
+Cancel
+
+====================================================
+
+BLUR DETECTION
+
+====================================================
+
+Implement automatic blur detection using the Laplacian variance method.
+
+Allow the user to configure:
+
+Blur Threshold
+
+Example:
+
+100
+
+150
+
+200
+
+Images below the threshold should be skipped automatically.
+
+Display:
+
+Blur Score
+
+Kept
+
+Skipped
+
+====================================================
+
+DUPLICATE DETECTION
+
+====================================================
+
+Implement duplicate frame detection.
+
+Compare consecutive frames using image similarity.
+
+If two frames exceed a similarity threshold (for example 95%), skip the duplicate.
+
+Allow the threshold to be configurable.
+
+Display:
+
+Duplicates Removed
+
+Remaining Images
+
+====================================================
+
+DATASET ORGANIZER
+
+====================================================
+
+Automatically organize extracted images.
+
+Example:
+
+datasets/
+
+    barangay178_v1/
+
+        raw_frames/
+
+            morning/
+
+            afternoon/
+
+            rain/
+
+            night/
+
+The user chooses the category before extraction.
+
+====================================================
+
+METADATA
+
+====================================================
+
+Generate metadata.csv
+
+Example:
+
+filename,time_seconds,frame_number,blur_score,kept
+
+rain_000001.jpg,0.0,0,245.1,True
+
+rain_000002.jpg,1.0,30,187.4,True
+
+rain_000003.jpg,2.0,60,75.2,False
+
+====================================================
+
+DATASET STATISTICS
+
+====================================================
+
+Generate a report showing:
+
+Images Extracted
+
+Images Removed
+
+Blurred Images
+
+Duplicate Images
+
+Final Dataset Size
+
+Average Blur Score
+
+Extraction Time
+
+====================================================
+
+USER INTERFACE
+
+====================================================
+
+Create a modern desktop interface.
+
+Use:
+
+CustomTkinter
+
+The interface should include:
+
+Left Sidebar
+
+Video Information Panel
+
+Extraction Settings
+
+Progress Bar
+
+Live Logs
+
+Statistics Panel
+
+Output Folder
+
+Dark Theme
+
+Responsive Layout
+
+====================================================
+
+CONFIGURATION
+
+====================================================
+
+Create config.py
+
+Allow configuration for:
+
+Default Output Folder
+
+Blur Threshold
+
+Duplicate Threshold
+
+Extraction Interval
+
+Supported Video Formats
+
+Image Quality
+
+JPEG Compression
+
+====================================================
+
+LOGGING
+
+====================================================
+
+Generate logs.
+
+Example:
+
+logs/
+
+    extraction.log
+
+Include:
+
+Start Time
+
+Finish Time
+
+Errors
+
+Skipped Frames
+
+Duplicate Frames
+
+Blurred Frames
+
+====================================================
+
+ERROR HANDLING
+
+====================================================
+
+Handle:
+
+Missing Video
+
+Unsupported Format
+
+Corrupted Video
+
+Permission Errors
+
+Disk Full
+
+Cancelled Extraction
+
+====================================================
+
+CODE QUALITY
+
+====================================================
+
+Requirements:
+
+• Modular architecture
+• Object-Oriented Design
+• Type hints
+• No use of "any"
+• Comprehensive comments
+• Beginner-friendly
+• SOLID principles where appropriate
+• Reusable utility functions
+• Clear separation of responsibilities
+
+====================================================
+
+DOCUMENTATION
+
+====================================================
+
+Create README.md explaining:
+
+How frame extraction works
+
+Why frame extraction is necessary
+
+Why duplicate removal improves dataset quality
+
+Why blur detection improves training
+
+How metadata is generated
+
+How the toolkit integrates into the YOLO training pipeline
+
+====================================================
+
+FINAL WORKFLOW
+
+====================================================
+
+Raw CCTV Video
+
+↓
+
+Frame Extraction
+
+↓
+
+Blur Removal
+
+↓
+
+Duplicate Removal
+
+↓
+
+Metadata Generation
+
+↓
+
+Dataset Organization
+
+↓
+
+Annotation (CVAT / Label Studio / Roboflow)
+
+↓
+
+YOLO Dataset
+
+↓
+
+Transfer Learning
+
+↓
+
+barangay178_v1.pt
+
+====================================================
+
+CONSTRAINTS
+
+====================================================
+
+Do NOT modify:
+
+FastAPI Backend
+
+React Frontend
+
+ByteTrack
+
+Tracking Pipeline
+
+Training Pipeline
+
+This toolkit must remain an independent preprocessing application that prepares high-quality datasets for future YOLOv8 transfer learning.
+
+The implementation should be production-ready, scalable, well-documented, and maintainable.
