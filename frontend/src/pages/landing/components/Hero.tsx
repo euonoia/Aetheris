@@ -35,10 +35,13 @@ export function Hero() {
 
           <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button size="lg">
-              <Link to="/app">Launch System <ArrowRight className="h-4 w-4" /></Link>
+              <Link className="flex items-center flex-row gap-2" to="/app">
+                Launch System 
+                <ArrowRight className="h-4 w-4" />
+            </Link>
             </Button>
             <Button size="lg" variant="outline">
-              <a href="#features"><PlayCircle className="h-4 w-4" /> View Features</a>
+              <a className="flex items-center flex-row gap-2" href="#features"><PlayCircle className="h-4 w-4" /> View Features</a>
             </Button>
           </motion.div>
 
@@ -65,12 +68,12 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           className="relative"
         >
-          <Card className="relative overflow-hidden shadow-elevated">
+          <Card className="relative py-0 gap-0 overflow-hidden shadow-elevated">
             <div className="flex items-center justify-between border-b border-border bg-secondary/50 px-4 py-3">
               <div className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[hsl(var(--warning))]/60" />
-                <span className="h-2.5 w-2.5 rounded-full bg-primary/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-accent/60" />
               </div>
               <span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
                 <Radio className="h-3 w-3 text-destructive" /> Live Monitoring

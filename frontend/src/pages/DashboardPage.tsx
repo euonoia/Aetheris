@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Camera, CheckCircle2, Crosshair, MapPin, ScanLine, Timer, XCircle, Radio as RadioIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { ViolationStatusBadge, SeverityBadge } from "@/components/shared/StatusBadges";
 import { violations, cameras } from "@/data/mock-violations";
 import { formatDateTime } from "@/lib/utils";
@@ -16,6 +14,7 @@ import { useTrackingJob } from "../hooks/useTrackingJob";
 import { useTrackingSocket } from "../hooks/useTrackingSocket";
 import type { TrackedVehicle } from "../types/tracking";
 import type { TrackingStatusResponse } from "../types/api";
+import type { TrackingJobStatus } from "../types/api";
 import LiveFramePreview from "#components/LiveFramePreview";
 
 const boxes = [
@@ -94,27 +93,17 @@ export default function DashboardPage() {
         await startTracking(file, threshold);
     };
 
-    useEffect(() => {
-       console.log(message);
-    }, [message]);
+    type progressVariantType = Record<TrackingJobStatus, "default" | "secondary" | "destructive" | "outline">;
+    const progressVariantBadge: progressVariantType = {
+        "queued" : "outline",
+        "processing" : "secondary",
+        "completed" : "default",
+        "failed" : "destructive"
+    } 
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="YOLO Vehicle Detector"
-        description="Live YOLOv8 detection feed and automated evidence review"
-        actions={
-          <Select value={camera} onValueChange={(value) => value && setCamera(value)}>
-            <SelectTrigger className="w-64"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {cameras.map((c) => (
-                <SelectItem key={c.id} value={c.id}>{c.id} — {c.location}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        }
-      />
-        <div><strong>Connection:</strong> {connectionState}</div>
+      
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         {/* Live camera + detection overlay */}
         <Card className="xl:col-span-2">
@@ -132,26 +121,28 @@ export default function DashboardPage() {
           <CardContent>
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-[#0d130d]">
                
-                    {!message ? (
+                    {!message ? loading ? (<h3 className="text-white">loading...</h3>) : (
                     <>
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(76,175,107,0.12),transparent_45%),radial-gradient(circle_at_75%_70%,rgba(255,153,85,0.10),transparent_40%)]" />
-                    <div className="absolute inset-0 bg-grid opacity-10" />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(76,175,107,0.12),transparent_45%),radial-gradient(circle_at_75%_70%,rgba(255,153,85,0.10),transparent_40%)]" />
+                        <div className="absolute inset-0 bg-grid opacity-10" />
 
-                    {boxes.map((b, i) => (
-                        <div
-                        key={i}
-                        className={`absolute rounded-sm border-2 ${b.violation ? "border-accent" : "border-primary"}`}
-                        style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${b.w}%`, height: `${b.h}%` }}
-                        >
-                        <span
-                            className={`absolute -top-6 left-0 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold text-white ${b.violation ? "bg-accent" : "bg-primary"}`}
-                        >
-                            {b.label} · {Math.round(b.conf * 100)}%
-                        </span>
-                        </div>
-                    ))}
+                        {boxes.map((b, i) => (
+                            <div
+                                key={i}
+                                className={`absolute rounded-sm border-2 ${b.violation ? "border-accent" : "border-primary"}`}
+                                style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${b.w}%`, height: `${b.h}%` }}
+                            >
+                            <span
+                                className={`absolute -top-6 left-0 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold text-white ${b.violation ? "bg-accent" : "bg-primary"}`}
+                            >
+                                {b.label} · {Math.round(b.conf * 100)}%
+                            </span>
+                            </div>
+                        ))}
                     
-                    </>) : (<LiveFramePreview message={message} />)}
+                    </>) : (
+                        <LiveFramePreview message={message} />
+                    )}
 
                 <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded bg-black/50 px-2 py-1 text-[10px] font-mono text-white">
                     <ScanLine className="h-3 w-3" /> YOLOv8n · {displayFps ?? 0} FPS
@@ -218,46 +209,53 @@ export default function DashboardPage() {
         {/* Detection result panel */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Crosshair className="h-4 w-4 text-primary" /> Detection Result</CardTitle>
-            <CardDescription>Auto-classified from current frame</CardDescription>
+            <CardTitle className="flex items-center gap-2"><Crosshair className="h-4 w-4 text-primary" />Current Active Tracks</CardTitle>
+            <CardDescription>Live tracking progress and telemetry</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-lg border border-accent/30 bg-accent/5 p-3">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-accent">Violation Detected</p>
-                <Badge variant="default">Live</Badge>
-              </div>
-              <p className="mt-1 text-sm font-medium">Illegal Parking — Motorcycle</p>
-              <p className="text-xs text-muted-foreground">Plate: NDX 2291 · Detected 00:03 ago</p>
+            <div className="rounded-lg border gap-2 border-accent/30 bg-accent/5 p-3">
+                <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-accent">Processing Status</p>
+                    <Badge variant={progressVariantBadge[inferredStatus?.status || "default"]}>
+                        {inferredStatus?.status}
+                    </Badge>
+                </div>
+                <Progress value={parseFloat(inferredStatus?.progress_percentage.toFixed(1) || "0")} className="mt-4 mb-2 h-1.5" />
+                <p className="text-xs flex justify-between text-muted-foreground">
+                    <p>Live tracking progress</p>
+                    <span className="font-semibold">{inferredStatus?.progress_percentage.toFixed(1)}%</span>
+                </p>
             </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Confidence Score</span>
-                <span className="font-semibold">96%</span>
-              </div>
-              <Progress value={96} className="mt-1.5 h-1.5" />
-            </div>
-
             <Separator />
 
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between"><span className="text-muted-foreground">Vehicle Type</span><span className="font-medium">Motorcycle</span></div>
-              <div className="flex items-center justify-between"><span className="text-muted-foreground">Color</span><span className="font-medium">Black</span></div>
-              <div className="flex items-center justify-between"><span className="text-muted-foreground">Camera</span><span className="font-medium">{activeCam.id}</span></div>
-              <div className="flex items-center justify-between"><span className="text-muted-foreground">Timestamp</span><span className="font-medium">{new Date().toLocaleTimeString("en-PH")}</span></div>
-            </div>
-
-            <Separator />
-
-            <div className="flex gap-2">
-              <Button className="flex-1" onClick={() => toast.success("Citation generated for NDX 2291")}>
-                <CheckCircle2 className="h-4 w-4" /> Generate Citation
-              </Button>
-              <Button variant="outline" size="icon" onClick={() => toast("Detection dismissed")}>
-                <XCircle className="h-4 w-4" />
-              </Button>
-            </div>
+            {activeTrackDetails.length === 0 ? (
+                <p style={{ color: "#94a3b8", margin: 0 }}>No active tracks detected on the latest frame.</p>
+            ) : (
+                <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", color: "#060a0f" }}>
+                    <thead>
+                    <tr>
+                        <th style={{ textAlign: "left", padding: "0.75rem 0", borderBottom: "1px solid rgba(148,163,184,0.2)" }}>Track ID</th>
+                        <th style={{ textAlign: "left", padding: "0.75rem 0", borderBottom: "1px solid rgba(148,163,184,0.2)" }}>Type</th>
+                        <th style={{ textAlign: "left", padding: "0.75rem 0", borderBottom: "1px solid rgba(148,163,184,0.2)" }}>Confidence</th>
+                        <th style={{ textAlign: "left", padding: "0.75rem 0", borderBottom: "1px solid rgba(148,163,184,0.2)" }}>Last Frame</th>
+                        <th style={{ textAlign: "left", padding: "0.75rem 0", borderBottom: "1px solid rgba(148,163,184,0.2)" }}>Duration</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {activeTrackDetails.slice(0, 10).map((track) => (
+                        <tr key={track.track_id}>
+                        <td style={{ padding: "0.75rem 0" }}>{track.track_id}</td>
+                        <td style={{ padding: "0.75rem 0", textTransform: "capitalize" }}>{track.class_name}</td>
+                        <td style={{ padding: "0.75rem 0" }}>{track.confidence.toFixed(2)}</td>
+                        <td style={{ padding: "0.75rem 0" }}>{track.last_frame}</td>
+                        <td style={{ padding: "0.75rem 0" }}>{track.total_frames}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+                </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -324,8 +322,13 @@ export default function DashboardPage() {
                   {selected.officerAssigned ? `Assigned to ${selected.officerAssigned}` : "Awaiting officer assignment"}
                 </li>
               </ol>
+              
             </div>
+            <Button className="flex-1" onClick={() => toast.success("Citation generated for NDX 2291")}>
+                <CheckCircle2 className="h-4 w-4" /> Generate Citation
+            </Button>
           </CardContent>
+            
         </Card>
       </div>
     </div>

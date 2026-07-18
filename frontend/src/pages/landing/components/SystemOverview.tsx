@@ -14,7 +14,7 @@ const capabilities = [
 
 export function SystemOverview() {
   return (
-    <section id="overview" className="border-b border-border bg-secondary/30 py-20">
+    <section id="overview" className="border-b border-border bg-primary/2 py-20">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -23,7 +23,7 @@ export function SystemOverview() {
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <Badge variant="outline">System Overview</Badge>
+          <Badge variant="default">System Overview</Badge>
           <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">Built for smarter, safer streets</h2>
           <p className="mt-3 text-muted-foreground">
             The system was developed to modernize how Barangay 178 records, verifies, and acts on traffic violations —
@@ -85,7 +85,7 @@ export function SystemOverview() {
             >
               <Card className="h-full transition-shadow hover:shadow-elevated">
                 <CardHeader>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-accent">
                     <c.icon className="h-5 w-5" />
                   </span>
                   <CardTitle className="pt-2 text-sm">{c.title}</CardTitle>
