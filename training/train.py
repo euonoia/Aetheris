@@ -3,6 +3,17 @@
 Usage:
   python training/train.py --config training/configs/barangay178.yaml
 """
+import sys
+import os
+
+# Make sure the project root (parent of this "training" folder) is importable,
+# so "from training.utils import ..." works no matter where this script is run from.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import argparse
+from ultralytics import YOLO
+from training.utils import load_yaml, ensure_dir, timestamp
+
 import argparse
 import os
 from ultralytics import YOLO
@@ -45,7 +56,7 @@ def main():
     if cfg.get("optimizer"):
         train_kwargs["optimizer"] = cfg.get("optimizer")
     if cfg.get("learning_rate"):
-        train_kwargs["lr"] = cfg.get("learning_rate")
+        train_kwargs["lr0"] = cfg.get("learning_rate")
 
     print("Training with configuration:")
     for k, v in cfg.items():

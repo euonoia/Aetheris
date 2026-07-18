@@ -1,4 +1,4 @@
-data: ../datasets/barangay178_v1/data.yaml
+data: C:/Users/admin/Documents/GitHub/Aetheris/datasets/my_dataset_v1/data.yaml
 
 epochs: 50
 
