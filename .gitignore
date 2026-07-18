@@ -36,6 +36,7 @@ experiments/
 
 models/custom/*.pt
 models/archive/*.pt
+*yolov8n.pt
 
 # Keep pretrained model tracked if desired
 # !models/pretrained/yolov8n.pt
