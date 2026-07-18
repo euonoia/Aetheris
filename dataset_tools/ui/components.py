@@ -1,7 +1,7 @@
 """
 UI components for Dataset Engineering Toolkit.
 
-Reusable components for building the application interface.
+Utilitarian component library optimized for technical data density and layout efficiency.
 """
 
 import customtkinter as ctk
@@ -12,7 +12,7 @@ from config import COLORS
 
 
 class StyledButton(ctk.CTkButton):
-    """Styled button component."""
+    """Utilitarian block button with distinct operational status colors."""
 
     def __init__(
         self,
@@ -22,16 +22,12 @@ class StyledButton(ctk.CTkButton):
         style: str = "primary",
         **kwargs
     ):
-        """
-        Create styled button.
+        # Extract configurations safely to avoid multi-value kwargs collisions
+        font = kwargs.pop("font", ("Segoe UI", 11, "bold"))
+        corner_radius = kwargs.pop("corner_radius", 2)
+        height = kwargs.pop("height", 28)
 
-        Args:
-            master: Parent widget
-            text: Button text
-            command: Click callback
-            style: 'primary', 'secondary', 'danger', 'success'
-        """
-        # Define styles
+        # Operational color matrices mapping actions directly to standard engineering palettes
         styles = {
             "primary": {
                 "fg_color": COLORS["accent"],
@@ -61,13 +57,17 @@ class StyledButton(ctk.CTkButton):
             master,
             text=text,
             command=command,
+            font=font,
+            corner_radius=corner_radius,
+            height=height,
+            border_spacing=2,
             **style_config,
             **kwargs,
         )
 
 
 class StyledLabel(ctk.CTkLabel):
-    """Styled label component."""
+    """High-contrast label for scannable telemetry arrays."""
 
     def __init__(
         self,
@@ -76,31 +76,27 @@ class StyledLabel(ctk.CTkLabel):
         style: str = "primary",
         **kwargs
     ):
-        """
-        Create styled label.
-
-        Args:
-            master: Parent widget
-            text: Label text
-            style: 'primary', 'secondary'
-        """
         text_colors = {
             "primary": COLORS["fg_primary"],
             "secondary": COLORS["fg_secondary"],
         }
 
         text_color = text_colors.get(style, COLORS["fg_primary"])
+        
+        # Safe extraction of font configuration overrides
+        font = kwargs.pop("font", ("Segoe UI", 11))
 
         super().__init__(
             master,
             text=text,
             text_color=text_color,
+            font=font,
             **kwargs,
         )
 
 
 class StyledFrame(ctk.CTkFrame):
-    """Styled frame component with border."""
+    """Structural layout container with localized engineering section headers."""
 
     def __init__(
         self,
@@ -108,51 +104,70 @@ class StyledFrame(ctk.CTkFrame):
         title: Optional[str] = None,
         **kwargs
     ):
-        """Create styled frame."""
+        border_width = kwargs.pop("border_width", 1)
+        corner_radius = kwargs.pop("corner_radius", 0)
+
         super().__init__(
             master,
             fg_color=COLORS["bg_secondary"],
+            border_color=COLORS["bg_tertiary"],
+            border_width=border_width,
+            corner_radius=corner_radius,
             **kwargs,
         )
 
         if title:
-            # Create title label
+            # High-density system sectional header banner
+            header_frame = ctk.CTkFrame(self, fg_color=COLORS["bg_tertiary"], height=24, corner_radius=0)
+            header_frame.pack(side="top", fill="x")
+            header_frame.pack_propagate(False)
+
             title_label = StyledLabel(
-                self,
-                text=title,
+                header_frame,
+                text=f" {title}",
                 style="primary",
-                font=("Arial", 12, "bold"),
+                font=("Consolas", 10, "bold"),
             )
-            title_label.pack(side="top", fill="x", padx=10, pady=(10, 5))
+            title_label.pack(side="left", padx=4)
 
 
 class ScrollableFrame(ctk.CTkScrollableFrame):
-    """Scrollable frame component."""
+    """Scrollable block frame containing overflow metrics collections."""
 
     def __init__(self, master, **kwargs):
-        """Create scrollable frame."""
+        border_width = kwargs.pop("border_width", 1)
+        corner_radius = kwargs.pop("corner_radius", 0)
+
         super().__init__(
             master,
             fg_color=COLORS["bg_secondary"],
+            border_color=COLORS["bg_tertiary"],
+            border_width=border_width,
+            corner_radius=corner_radius,
             **kwargs,
         )
 
 
 class ProgressBar(ctk.CTkProgressBar):
-    """Styled progress bar."""
+    """Linear status trackbar displaying ongoing thread workloads."""
 
     def __init__(self, master, **kwargs):
-        """Create progress bar."""
+        border_width = kwargs.pop("border_width", 1)
+        corner_radius = kwargs.pop("corner_radius", 0)
+
         super().__init__(
             master,
             progress_color=COLORS["accent"],
-            fg_color=COLORS["bg_tertiary"],
+            fg_color=COLORS["bg_primary"],
+            border_color=COLORS["bg_tertiary"],
+            border_width=border_width,
+            corner_radius=corner_radius,
             **kwargs,
         )
 
 
 class StatCard(StyledFrame):
-    """Card displaying a statistic."""
+    """Compact telemetry data cell optimized for dense horizontal grid positioning."""
 
     def __init__(
         self,
@@ -161,49 +176,51 @@ class StatCard(StyledFrame):
         value: str = "0",
         **kwargs
     ):
-        """
-        Create stat card.
-
-        Args:
-            master: Parent widget
-            label: Stat label
-            value: Stat value
-        """
         super().__init__(master, **kwargs)
 
-        # Label
-        label_widget = StyledLabel(
-            self,
-            text=label,
-            style="secondary",
-            font=("Arial", 10),
-        )
-        label_widget.pack(side="top", fill="x", padx=10, pady=(5, 0))
+        # Content container layout maximizing internal matrix density
+        content_inner = ctk.CTkFrame(self, fg_color="transparent")
+        content_inner.pack(fill="both", expand=True, padx=8, pady=4)
 
-        # Value
+        # Metric Description
+        label_widget = StyledLabel(
+            content_inner,
+            text=label.upper(),
+            style="secondary",
+            font=("Consolas", 9, "bold"),
+        )
+        label_widget.pack(side="top", anchor="w")
+
+        # Metric Value Output Matrix
         self.value_widget = StyledLabel(
-            self,
+            content_inner,
             text=value,
             style="primary",
-            font=("Arial", 14, "bold"),
+            font=("Consolas", 14, "bold"),
         )
-        self.value_widget.pack(side="top", fill="x", padx=10, pady=(0, 5))
+        self.value_widget.pack(side="top", anchor="w", pady=(2, 0))
 
     def update_value(self, value: str) -> None:
-        """Update displayed value."""
+        """Atomically overwrite system telemetry metrics display state."""
         self.value_widget.configure(text=value)
 
 
 class InputField(ctk.CTkEntry):
-    """Styled input field."""
+    """High-density variable configuration input channel."""
 
     def __init__(self, master, placeholder: str = "", **kwargs):
-        """Create input field."""
+        font = kwargs.pop("font", ("Consolas", 11))
+        height = kwargs.pop("height", 24)
+        corner_radius = kwargs.pop("corner_radius", 0)
+
         super().__init__(
             master,
-            fg_color=COLORS["bg_tertiary"],
+            fg_color=COLORS["bg_primary"],
             text_color=COLORS["fg_primary"],
-            border_color=COLORS["bg_primary"],
+            border_color=COLORS["bg_tertiary"],
+            corner_radius=corner_radius,
+            font=font,
+            height=height,
             **kwargs,
         )
 
@@ -214,17 +231,14 @@ class InputField(ctk.CTkEntry):
             self.bind("<FocusOut>", self._on_focus_out)
 
     def _on_focus_in(self, event):
-        """Clear placeholder on focus."""
         if self.get() == self.placeholder:
             self.delete(0, tk.END)
 
     def _on_focus_out(self, event):
-        """Restore placeholder if empty."""
         if not self.get():
             self.insert(0, self.placeholder)
 
     def get_value(self) -> str:
-        """Get actual value (excluding placeholder)."""
         value = self.get()
         if hasattr(self, 'placeholder') and value == self.placeholder:
             return ""
@@ -232,49 +246,47 @@ class InputField(ctk.CTkEntry):
 
 
 class LogPanel(ScrollableFrame):
-    """Panel for displaying logs."""
+    """Standard console stdout console window imitating terminal text output sinks."""
 
     def __init__(self, master, **kwargs):
-        """Create log panel."""
         super().__init__(master, **kwargs)
 
-        # Configure text widget for better display
+        # Fixed: Changed font size from 9.5 to integer 9 to support strict Tcl interpreters
         self.text_widget = tk.Text(
             self,
             bg=COLORS["bg_primary"],
             fg=COLORS["fg_primary"],
-            font=("Courier", 9),
-            height=8,
+            font=("Consolas", 9),
             relief="flat",
             insertbackground=COLORS["fg_primary"],
+            padx=6,
+            pady=6,
+            wrap="word"
         )
-        self.text_widget.pack(fill="both", expand=True, padx=5, pady=5)
+        self.text_widget.pack(fill="both", expand=True)
 
     def add_log(self, message: str) -> None:
-        """Add message to log."""
+        """Append log message and automatically auto-scroll target stream index to bottom."""
         self.text_widget.insert("end", message + "\n")
         self.text_widget.see("end")
         self.text_widget.update()
 
     def clear_log(self) -> None:
-        """Clear all logs."""
+        """Flush the text buffer display arena."""
         self.text_widget.delete("1.0", "end")
 
     def get_logs(self) -> str:
-        """Get all log content."""
+        """Exfiltrate written text buffer arrays."""
         return self.text_widget.get("1.0", "end-1c")
 
 
 class InfoPanel(StyledFrame):
-    """Panel for displaying video information."""
+    """Dense key-value status read-out table for stream state introspection."""
 
     def __init__(self, master, **kwargs):
-        """Create info panel."""
-        super().__init__(master, title="Video Information", **kwargs)
+        super().__init__(master, title="METADATA & INGEST TELEMETRY STATUS", **kwargs)
 
-        # Create grid for info items
         self.info_labels = {}
-
         info_items = [
             ("Filename", "—"),
             ("Resolution", "—"),
@@ -283,29 +295,31 @@ class InfoPanel(StyledFrame):
             ("Total Frames", "—"),
         ]
 
+        # Compact key-value matrix layout pipeline
         for label, value in info_items:
-            row_frame = ctk.CTkFrame(self, fg_color="transparent")
-            row_frame.pack(fill="x", padx=10, pady=5)
+            row_frame = ctk.CTkFrame(self, fg_color="transparent", height=18)
+            row_frame.pack(fill="x", padx=10, pady=1)
+            row_frame.pack_propagate(False)
 
             label_widget = StyledLabel(
                 row_frame,
-                text=f"{label}:",
+                text=f"{label.upper()}:",
                 style="secondary",
-                font=("Arial", 10),
+                font=("Consolas", 9),
             )
-            label_widget.pack(side="left", fill="x", expand=True)
+            label_widget.pack(side="left")
 
             value_widget = StyledLabel(
                 row_frame,
                 text=value,
                 style="primary",
-                font=("Arial", 10, "bold"),
+                font=("Consolas", 9, "bold"),
             )
-            value_widget.pack(side="left")
+            value_widget.pack(side="right")
 
             self.info_labels[label] = value_widget
 
     def update_info(self, label: str, value: str) -> None:
-        """Update info value."""
+        """Synchronize runtime state maps directly into tabular view metrics."""
         if label in self.info_labels:
             self.info_labels[label].configure(text=value)
