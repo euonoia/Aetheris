@@ -1,0 +1,464 @@
+I am building an AI Traffic Monitoring System for Barangay 178, North Caloocan City, Philippines.
+
+Current Stack
+-------------
+
+Backend
+- FastAPI
+- Python
+- OpenCV
+- Ultralytics YOLOv8
+- ByteTrack
+
+Frontend
+- React
+- Vite
+- TypeScript
+
+Research Toolkit
+----------------
+
+I already have a standalone Dataset Engineering Toolkit built with CustomTkinter.
+
+Current modules include:
+
+- Frame Extractor
+- Blur Detector
+- Duplicate Detector
+- Metadata Generator
+- Dataset Organizer
+- Quality Inspector
+
+However, these modules currently behave like independent tools.
+
+I want to refactor them into ONE integrated preprocessing pipeline similar to professional computer vision dataset engineering software.
+
+==========================================================
+GOAL
+==========================================================
+
+The toolkit should operate as ONE workflow instead of multiple disconnected applications.
+
+The user should only interact with ONE dashboard.
+
+Each processing stage automatically passes its output to the next stage.
+
+There should be no separate applications for blur detection, duplicate detection, or quality inspection.
+
+Everything should be orchestrated by a central Pipeline Manager.
+
+==========================================================
+NEW ARCHITECTURE
+==========================================================
+
+dataset_tools/
+
+    main.py
+
+    config.py
+
+    pipeline/
+
+        manager.py
+
+        extraction.py
+
+        blur_filter.py
+
+        duplicate_filter.py
+
+        metadata.py
+
+        organizer.py
+
+        quality_review.py
+
+        exporter.py
+
+    services/
+
+        video_service.py
+
+        image_service.py
+
+        filesystem_service.py
+
+    models/
+
+        dataset_record.py
+
+        processing_result.py
+
+        metadata_record.py
+
+    ui/
+
+        dashboard.py
+
+        components.py
+
+        pages/
+
+            import_page.py
+
+            processing_page.py
+
+            quality_page.py
+
+            export_page.py
+
+    logs/
+
+    outputs/
+
+Keep everything modular.
+
+==========================================================
+PIPELINE
+==========================================================
+
+The workflow must be:
+
+Import Video
+
+↓
+
+Read Video Metadata
+
+↓
+
+Frame Extraction
+
+↓
+
+Blur Detection
+
+↓
+
+Duplicate Detection
+
+↓
+
+Metadata Generation
+
+↓
+
+Dataset Organization
+
+↓
+
+Quality Review
+
+↓
+
+Export Dataset
+
+↓
+
+Ready for Annotation
+
+↓
+
+CVAT
+
+↓
+
+YOLO Dataset
+
+↓
+
+Transfer Learning
+
+No manual switching between modules.
+
+Each stage automatically receives the output of the previous stage.
+
+==========================================================
+PIPELINE MANAGER
+==========================================================
+
+Create a PipelineManager class.
+
+Responsibilities:
+
+• orchestrate every processing stage
+
+• emit progress updates
+
+• handle pause
+
+• resume
+
+• cancel
+
+• propagate errors
+
+• maintain current stage
+
+• collect statistics
+
+The UI must never directly call FrameExtractor.
+
+Instead:
+
+Dashboard
+
+↓
+
+PipelineManager
+
+↓
+
+Extraction
+
+↓
+
+Blur
+
+↓
+
+Duplicate
+
+↓
+
+Metadata
+
+↓
+
+Organizer
+
+↓
+
+Quality Review
+
+↓
+
+Exporter
+
+==========================================================
+QUALITY INSPECTOR
+==========================================================
+
+The existing Quality Inspector should NOT be a standalone application.
+
+Convert it into the final review stage of the pipeline.
+
+It should display:
+
+Current Image
+
+Previous
+
+Next
+
+Approve
+
+Reject
+
+Needs Review
+
+Keyboard shortcuts:
+
+A = Approve
+
+R = Reject
+
+N = Needs Review
+
+Arrow Keys = Navigation
+
+Display:
+
+Blur Score
+
+Duplicate Score
+
+Brightness
+
+Resolution
+
+Filename
+
+Frame Number
+
+Timestamp
+
+==========================================================
+DATA FLOW
+==========================================================
+
+Create immutable data models.
+
+Example:
+
+VideoInfo
+
+↓
+
+ExtractedFrame
+
+↓
+
+FilteredFrame
+
+↓
+
+MetadataRecord
+
+↓
+
+DatasetRecord
+
+Every processing stage should receive and return strongly typed objects.
+
+Avoid passing raw dictionaries.
+
+==========================================================
+PIPELINE STATUS
+==========================================================
+
+Display a vertical pipeline status.
+
+Example:
+
+✔ Video Loaded
+
+✔ Metadata Read
+
+✔ Frames Extracted
+
+✔ Blur Removed
+
+✔ Duplicates Removed
+
+✔ Metadata Generated
+
+✔ Dataset Organized
+
+✔ Quality Review
+
+✔ Export Complete
+
+Current stage should highlight automatically.
+
+==========================================================
+DASHBOARD
+==========================================================
+
+The application should open directly to a single dashboard.
+
+Sections:
+
+Left Sidebar
+
+Pipeline Status
+
+Video Information
+
+Processing Configuration
+
+Live Logs
+
+Progress Bar
+
+Statistics
+
+Quality Review
+
+Export
+
+No separate windows.
+
+Everything happens inside one application.
+
+==========================================================
+EXPORT
+==========================================================
+
+Export should generate:
+
+datasets/
+
+barangay178_v1/
+
+raw_frames/
+
+approved/
+
+rejected/
+
+needs_review/
+
+metadata.csv
+
+summary.json
+
+processing.log
+
+The approved folder becomes the annotation dataset.
+
+==========================================================
+ERROR HANDLING
+==========================================================
+
+If Blur Detection fails
+
+↓
+
+Pipeline pauses
+
+↓
+
+Display error
+
+↓
+
+Allow Resume
+
+If Duplicate Detection fails
+
+↓
+
+Do NOT restart from frame extraction.
+
+Resume from duplicate stage.
+
+Every stage should be checkpoint-aware.
+
+==========================================================
+DESIGN PRINCIPLES
+==========================================================
+
+Follow:
+
+SOLID
+
+Object-Oriented Design
+
+Dependency Injection where appropriate
+
+Single Responsibility Principle
+
+Reusable services
+
+Clear separation between UI and processing logic
+
+No duplicated code
+
+Type hints everywhere
+
+Beginner-friendly comments
+
+==========================================================
+IMPORTANT
+==========================================================
+
+Do NOT create another standalone application.
+
+Do NOT create another Quality Inspector executable.
+
+Everything must be integrated into ONE Dataset Engineering Toolkit.
+
+The dashboard should feel like professional software similar to Label Studio, CVAT, or Roboflow preprocessing tools.
+
+The final result should be a production-ready Dataset Engineering Pipeline that prepares videos for YOLOv8 transfer learning using one seamless workflow.

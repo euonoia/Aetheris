@@ -1,0 +1,497 @@
+The Dataset Engineering Toolkit is now capable of:
+
+✅ Video Selection
+
+✅ Frame Extraction
+
+✅ Blur Detection
+
+✅ Duplicate Detection
+
+✅ Dataset Organization
+
+✅ Metadata Generation
+
+✅ Progress Tracking
+
+✅ Logging
+
+✅ Modern Desktop Interface
+
+The extraction engine is stable.
+
+Do NOT modify any existing extraction algorithms.
+
+Do NOT modify duplicate detection.
+
+Do NOT modify blur detection.
+
+Do NOT modify metadata generation.
+
+Do NOT modify folder organization.
+
+This phase focuses ONLY on quality inspection after frame extraction.
+
+====================================================
+
+PHASE 8D
+
+Dataset Quality Inspector
+
+====================================================
+
+GOAL
+
+Create an interactive quality inspection workspace allowing researchers to manually inspect extracted images before annotation.
+
+This is a standalone module inside the Dataset Engineering Toolkit.
+
+It is NOT part of FastAPI.
+
+It is NOT part of React.
+
+It is NOT part of YOLO inference.
+
+====================================================
+
+NEW MODULE
+
+====================================================
+
+dataset_tools/
+
+    quality_inspector/
+
+        viewer.py
+
+        inspector.py
+
+        thumbnail_cache.py
+
+        filters.py
+
+        image_metrics.py
+
+        actions.py
+
+====================================================
+
+WORKSPACE
+
+====================================================
+
+Create a new tab:
+
+Dataset Quality Inspector
+
+Layout
+
+--------------------------------------------------
+
+LEFT PANEL
+
+Dataset Browser
+
+Display
+
+Dataset Folder
+
+Category
+
+Image Count
+
+Search
+
+Filter
+
+--------------------------------------------------
+
+CENTER PANEL
+
+Large Image Preview
+
+Display
+
+Current Image
+
+Filename
+
+Resolution
+
+Blur Score
+
+Similarity Score
+
+Image Size
+
+Frame Number
+
+Timestamp
+
+Mouse wheel should zoom.
+
+Double click should fit to screen.
+
+====================================================
+
+RIGHT PANEL
+
+====================================================
+
+Quality Metrics
+
+Blur Score
+
+Duplicate Similarity
+
+Brightness
+
+Contrast
+
+Sharpness
+
+File Size
+
+Image Resolution
+
+Buttons
+
+Approve
+
+Reject
+
+Delete
+
+Move to Review
+
+Restore
+
+====================================================
+
+THUMBNAIL STRIP
+
+====================================================
+
+Display all extracted images as thumbnails.
+
+Each thumbnail should show
+
+Green Border
+
+Approved
+
+Yellow Border
+
+Needs Review
+
+Red Border
+
+Rejected
+
+Gray Border
+
+Not Reviewed
+
+Allow clicking thumbnails.
+
+Allow keyboard navigation.
+
+Arrow Keys
+
+Previous
+
+Next
+
+====================================================
+
+IMAGE FILTERS
+
+====================================================
+
+Allow filtering by
+
+Approved
+
+Rejected
+
+Needs Review
+
+Blurred
+
+Duplicates
+
+Large Images
+
+Small Images
+
+Low Brightness
+
+High Brightness
+
+Resolution
+
+====================================================
+
+AUTO QUALITY ANALYSIS
+
+====================================================
+
+Automatically compute
+
+Blur Score
+
+Brightness
+
+Contrast
+
+Histogram
+
+Sharpness
+
+Duplicate Similarity
+
+Display warning badges
+
+Example
+
+⚠ Very Blurry
+
+⚠ Possible Duplicate
+
+⚠ Very Dark
+
+⚠ Very Bright
+
+====================================================
+
+BATCH ACTIONS
+
+====================================================
+
+Support
+
+Approve Selected
+
+Reject Selected
+
+Delete Selected
+
+Move Selected
+
+Export Selected
+
+Restore Deleted
+
+====================================================
+
+DATASET HEALTH
+
+====================================================
+
+Generate a dataset health dashboard.
+
+Display
+
+Total Images
+
+Approved
+
+Rejected
+
+Needs Review
+
+Blurred
+
+Duplicates
+
+Average Blur
+
+Average Brightness
+
+Average Resolution
+
+Overall Dataset Quality Score
+
+Example
+
+Dataset Quality
+
+94%
+
+====================================================
+
+LIVE STATISTICS
+
+====================================================
+
+Display cards
+
+Images Reviewed
+
+Images Remaining
+
+Approved Rate
+
+Rejected Rate
+
+Average Review Speed
+
+====================================================
+
+SHORTCUTS
+
+====================================================
+
+Keyboard shortcuts
+
+A
+
+Approve
+
+R
+
+Reject
+
+Delete
+
+Delete Image
+
+Arrow Left
+
+Previous
+
+Arrow Right
+
+Next
+
+Space
+
+Zoom
+
+Ctrl+A
+
+Approve All
+
+====================================================
+
+EXPORT
+
+====================================================
+
+After inspection create
+
+approved/
+
+review/
+
+rejected/
+
+Automatically move files.
+
+Generate
+
+inspection_report.csv
+
+Example
+
+filename,status,blur,brightness,notes
+
+rain_001.jpg,approved,210.5,132,
+
+rain_002.jpg,rejected,35.2,91,blurred
+
+====================================================
+
+USER EXPERIENCE
+
+====================================================
+
+Keep the modern UI introduced in Phase 8C.
+
+Large preview.
+
+Dark mode.
+
+Responsive layout.
+
+Modern cards.
+
+Smooth thumbnail loading.
+
+Lazy image loading.
+
+====================================================
+
+CODE QUALITY
+
+====================================================
+
+Use reusable components.
+
+Maintain SOLID principles.
+
+Use Object-Oriented Design.
+
+Use type hints.
+
+Avoid duplicated code.
+
+Use asynchronous thumbnail loading if appropriate.
+
+====================================================
+
+DOCUMENTATION
+
+====================================================
+
+Explain
+
+Why manual inspection improves dataset quality
+
+Why human validation is still important
+
+How this module integrates into the YOLO transfer learning pipeline
+
+====================================================
+
+FINAL WORKFLOW
+
+Raw Video
+
+↓
+
+Frame Extraction
+
+↓
+
+Blur Removal
+
+↓
+
+Duplicate Removal
+
+↓
+
+Dataset Quality Inspector
+
+↓
+
+Approved Dataset
+
+↓
+
+CVAT Annotation
+
+↓
+
+YOLO Dataset
+
+↓
+
+Transfer Learning
+
+↓
+
+barangay178_v1.pt
+
+The implementation should be production-ready, scalable, maintainable, and suitable for research laboratories preparing computer vision datasets.

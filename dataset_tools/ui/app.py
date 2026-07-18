@@ -6,13 +6,14 @@ Utilitarian desktop interface optimized for information density and technical ob
 
 import customtkinter as ctk
 from pathlib import Path
-from typing import Optional, Callable
+from typing import Optional, Callable, Dict, List
 import tkinter.filedialog as filedialog
 import threading
 import time
 
 from config import (
     COLORS,
+    DEFAULT_CATEGORIES,
     WINDOW_DEFAULT_WIDTH,
     WINDOW_DEFAULT_HEIGHT,
     WINDOW_MIN_WIDTH,
@@ -31,10 +32,8 @@ from ui.components import (
     InfoPanel,
     InputField,
 )
-from frame_extractor.extractor import FrameExtractor, ExtractionConfig
-from blur_detector.detector import BlurDetector
-from duplicate_detector.detector import DuplicateDetector
-from metadata.generator import MetadataGenerator
+from pipeline.manager import PipelineManager
+from models.dataset_record import MetadataRecord
 from utils.logging_utils import get_logger
 from utils.file_utils import (
     validate_video_file,
@@ -68,11 +67,12 @@ class DatasetToolkitApp(ctk.CTk):
         self.extraction_thread: Optional[threading.Thread] = None
         self.start_time: float = 0
 
-        # Instantiate pipeline workers
-        self.extractor = FrameExtractor()
-        self.blur_detector = BlurDetector(BLUR_THRESHOLD)
-        self.duplicate_detector = DuplicateDetector(DUPLICATE_THRESHOLD)
-        self.metadata_generator = MetadataGenerator()
+        # Instantiate the centralized pipeline manager
+        self.pipeline_manager = PipelineManager()
+        self.pipeline_manager.add_status_callback(self._on_pipeline_status_update)
+
+        self.review_records: List[MetadataRecord] = []
+        self.review_index: int = 0
 
         # Build structural developer dashboard
         self._create_ui()
@@ -114,8 +114,10 @@ class DatasetToolkitApp(ctk.CTk):
 
         # 3. Thread Process Trackers
         self._create_progress_section(telemetry_column)
+        # 4. Embedded Quality Review Panel
+        self._create_review_section(telemetry_column)
 
-        # 4. Standard Output Log Engine Panel
+        # 5. Standard Output Log Engine Panel
         self.log_panel = LogPanel(telemetry_column, height=260)
         self.log_panel.pack(fill="both", expand=True, pady=(6, 0))
 
@@ -373,14 +375,20 @@ class DatasetToolkitApp(ctk.CTk):
         self.start_btn.configure(state="disabled")
         self.cancel_btn.configure(state="normal")
 
-        self.extraction_thread = threading.Thread(
-            target=self._extraction_worker,
-            args=(self.selected_video, interval_value, blur_threshold, duplicate_threshold),
-            daemon=True,
+        # Start the centralized pipeline manager
+        self.pipeline_manager.start(
+            self.selected_video,
+            self.output_folder,
+            self.interval_type_var.get(),
+            interval_value,
+            blur_threshold,
+            duplicate_threshold,
+            dataset_name=self.selected_video.stem,
+            categories=DEFAULT_CATEGORIES,
+            on_progress=self._on_pipeline_progress,
         )
-        self.extraction_thread.start()
         self.start_time = time.time()
-        self._add_log("[Pipeline Thread Engaged] Processing operations loop initialization starting...")
+        self._add_log("[Pipeline Thread Engaged] PipelineManager start invoked")
 
     def _extraction_worker(
         self,
@@ -389,90 +397,148 @@ class DatasetToolkitApp(ctk.CTk):
         blur_threshold: float,
         duplicate_threshold: float,
     ) -> None:
-        """Worker thread executing video extraction routines."""
-        try:
-            config = ExtractionConfig(
-                output_folder=self.output_folder / video_path.stem,
-                interval_type=self.interval_type_var.get(),
-                interval_value=interval_value,
-                blur_threshold=blur_threshold,
-                remove_duplicates=True,
-            )
+        """Deprecated: extraction worker logic moved to PipelineManager.
 
-            def on_progress(current, total):
-                progress = current / total if total > 0 else 0
-                self.progress_bar.set(progress)
-                self.progress_text.configure(text=f"Parsing Frame Vector Array: {current}/{total} units calculated")
-                elapsed = time.time() - self.start_time
-                self.time_text.configure(text=f"T+ {format_time(elapsed)}")
-
-            def on_error(msg):
-                self._add_log(f"[Worker Telemetry Warning] {msg}")
-
-            extracted, frame_metadata = self.extractor.extract_frames(
-                video_path, config, on_progress=on_progress, on_error=on_error
-            )
-
-            if extracted == 0:
-                self._add_log("[Pipeline Failure] Frame conversion return array evaluated to empty set")
-                return
-
-            self._add_log(f"[Stage Complete] Parsed {extracted} frame instances to drive cluster storage")
-
-            # Analytical variance passes
-            if self.blur_detection_var.get():
-                self._add_log("[Pipeline Event] Running spatial frequency evaluation algorithms...")
-                kept, removed, frame_metadata = self.blur_detector.process_frames(
-                    frame_metadata, config.output_folder, blur_threshold
-                )
-                self._add_log(f"[Metrics Profile] Fast-Fourier Analysis Complete: Saved={kept} | Dropped={removed}")
-                self.blur_detector.cleanup_blurry_frames(frame_metadata, config.output_folder)
-
-            if self.duplicate_detection_var.get():
-                self._add_log("[Pipeline Event] Running cross-correlation similarity processing metrics passes...")
-                kept, removed, frame_metadata = self.duplicate_detector.process_frames(
-                    frame_metadata, config.output_folder, duplicate_threshold
-                )
-                self._add_log(f"[Metrics Profile] Redundancy Evaluation Pass Complete: Saved={kept} | Dropped={removed}")
-                self.duplicate_detector.cleanup_duplicate_frames(frame_metadata, config.output_folder)
-
-            # Package outputs
-            self.metadata_generator.generate_csv(frame_metadata, config.output_folder)
-            extraction_time = time.time() - self.start_time
-            self.metadata_generator.generate_report(
-                frame_metadata, config.output_folder, extraction_time, video_path.stem
-            )
-
-            # Quantize final dataset variables updates
-            final_kept = sum(1 for m in frame_metadata if m.get("kept", True))
-            final_removed = len(frame_metadata) - final_kept
-            blurred = sum(1 for m in frame_metadata if m.get("blur_score") is not None and m.get("blur_score") < blur_threshold)
-            duplicates = sum(1 for m in frame_metadata if m.get("is_duplicate", False))
-
-            self.stat_cards["extracted"].update_value(str(extracted))
-            self.stat_cards["kept"].update_value(str(final_kept))
-            self.stat_cards["removed"].update_value(str(final_removed))
-            self.stat_cards["blurred"].update_value(str(blurred))
-            self.stat_cards["duplicates"].update_value(str(duplicates))
-
-            self.progress_bar.set(1.0)
-            self._add_log("[Pipeline Success] Pipeline routines terminated without exception context flags. Data synced.")
-
-        except Exception as e:
-            self._add_log(f"[Pipeline Panic Exception Alert] Execution thread broken: {str(e)}")
-            logger.error(f"Execution processing breakdown: {str(e)}")
-
-        finally:
-            self.extraction_running = False
-            self.start_btn.configure(state="normal")
-            self.cancel_btn.configure(state="disabled")
+        This method is retained for reference but no longer executes processing.
+        """
+        self._add_log("[Deprecated] _extraction_worker is no longer used. Use PipelineManager.")
+        return
 
     def _cancel_extraction(self) -> None:
         """Set execution termination signals."""
         self.extraction_running = False
-        self._add_log("[Pipeline Abort Event Intercepted] Execution pipeline worker thread state cancellation processing triggered")
+        self._add_log("[Pipeline Abort Event Intercepted] Execution pipeline worker state cancellation processing triggered")
+        # Signal pipeline manager to cancel
+        try:
+            self.pipeline_manager.request_cancel()
+        except Exception:
+            pass
         self.start_btn.configure(state="normal")
         self.cancel_btn.configure(state="disabled")
+
+    def _create_review_section(self, parent) -> None:
+        """Embedded quality review panel for pipeline inspection."""
+        frame = StyledFrame(parent, title="4. QUALITY REVIEW SUMMARY")
+        frame.pack(fill="x", pady=(6, 6))
+
+        self.review_summary_labels = {}
+        info_items = [
+            ("Pending", "0"),
+            ("Approved", "0"),
+            ("Rejected", "0"),
+            ("Needs Review", "0"),
+            ("Current File", "—"),
+            ("Current Status", "—"),
+        ]
+
+        for label, value in info_items:
+            row = ctk.CTkFrame(frame, fg_color="transparent", height=20)
+            row.pack(fill="x", padx=10, pady=2)
+            row.pack_propagate(False)
+            title = StyledLabel(row, text=f"{label}:", style="secondary", font=("Consolas", 9))
+            title.pack(side="left")
+            value_label = StyledLabel(row, text=value, style="primary", font=("Consolas", 9, "bold"))
+            value_label.pack(side="right")
+            self.review_summary_labels[label.lower().replace(" ", "_")] = value_label
+
+        button_frame = ctk.CTkFrame(frame, fg_color="transparent")
+        button_frame.pack(fill="x", padx=10, pady=(8, 8))
+        self.review_prev_btn = StyledButton(button_frame, text="Previous", command=lambda: self._navigate_review(-1), width=120)
+        self.review_prev_btn.pack(side="left", padx=(0, 4))
+        self.review_next_btn = StyledButton(button_frame, text="Next", command=lambda: self._navigate_review(1), width=120)
+        self.review_next_btn.pack(side="left", padx=(4, 0))
+        self.review_approve_btn = StyledButton(button_frame, text="Approve", command=lambda: self._set_review_status("approved"), style="success", width=120)
+        self.review_approve_btn.pack(side="left", padx=(12, 4))
+        self.review_reject_btn = StyledButton(button_frame, text="Reject", command=lambda: self._set_review_status("rejected"), style="danger", width=120)
+        self.review_reject_btn.pack(side="left", padx=(4, 0))
+        self.review_needs_btn = StyledButton(button_frame, text="Needs Review", command=lambda: self._set_review_status("needs_review"), style="warning", width=120)
+        self.review_needs_btn.pack(side="left", padx=(4, 0))
+
+    def _on_pipeline_progress(self, stage_name: str, progress: float) -> None:
+        self.after(0, lambda: self._update_progress(stage_name, progress))
+
+    def _update_progress(self, stage_name: str, progress: float) -> None:
+        self.progress_bar.set(progress)
+        self.progress_text.configure(text=f"{stage_name}: {progress*100:.0f}%")
+        elapsed = time.time() - self.start_time
+        self.time_text.configure(text=f"T+ {format_time(elapsed)}")
+
+    def _on_pipeline_status_update(self) -> None:
+        self.after(0, self._sync_pipeline_status)
+
+    def _sync_pipeline_status(self) -> None:
+        status = self.pipeline_manager.get_stage_status()
+        current = self.pipeline_manager.current_stage
+        try:
+            stage_index = self.pipeline_manager.pipeline_steps.index(current) if current in self.pipeline_manager.pipeline_steps else 0
+            overall_progress = (stage_index + 1) / len(self.pipeline_manager.pipeline_steps)
+        except Exception:
+            overall_progress = 0.0
+        self.progress_bar.set(overall_progress)
+        self.progress_text.configure(text=f"{current} [{status.get(current, 'unknown')}]")
+
+        summary = self.pipeline_manager.get_summary()
+        self.stat_cards["extracted"].update_value(str(summary.extracted_frames))
+        self.stat_cards["kept"].update_value(str(summary.kept_frames))
+        self.stat_cards["removed"].update_value(str(summary.removed_frames))
+        self.stat_cards["blurred"].update_value(str(summary.blurred_frames))
+        self.stat_cards["duplicates"].update_value(str(summary.duplicate_frames))
+
+        if current in {"Quality Review", "Export Complete"}:
+            records = self.pipeline_manager.get_review_records()
+            self._load_review_records(records)
+
+        if current == "Export Complete" or self.pipeline_manager.error_message:
+            self.start_btn.configure(state="normal")
+            self.cancel_btn.configure(state="disabled")
+            if self.pipeline_manager.error_message:
+                self._add_log(f"[Pipeline Error] {self.pipeline_manager.error_message}")
+            else:
+                self._add_log("[Pipeline Success] End-to-end pipeline complete")
+
+    def _load_review_records(self, records: List[MetadataRecord]) -> None:
+        self.review_records = records
+        self.review_index = 0
+        self._update_review_summary()
+        self._refresh_review_detail()
+
+    def _navigate_review(self, direction: int) -> None:
+        if not self.review_records:
+            return
+        self.review_index = max(0, min(self.review_index + direction, len(self.review_records) - 1))
+        self._refresh_review_detail()
+
+    def _refresh_review_detail(self) -> None:
+        if not self.review_records:
+            self.review_summary_labels["current_file"].configure(text="—")
+            self.review_summary_labels["current_status"].configure(text="—")
+            return
+
+        record = self.review_records[self.review_index]
+        self.review_summary_labels["current_file"].configure(text=record.extracted_frame.filename)
+        self.review_summary_labels["current_status"].configure(text=record.status.replace("_", " ").title())
+        self._update_review_summary()
+
+    def _set_review_status(self, status: str) -> None:
+        if not self.review_records:
+            return
+        record = self.review_records[self.review_index]
+        try:
+            self.pipeline_manager.set_record_status(record.extracted_frame.filename, status)
+        except Exception:
+            pass
+        record.status = status
+        self._refresh_review_detail()
+
+    def _update_review_summary(self) -> None:
+        pending = sum(1 for r in self.review_records if r.status == "not_reviewed")
+        approved = sum(1 for r in self.review_records if r.status == "approved")
+        rejected = sum(1 for r in self.review_records if r.status == "rejected")
+        needs_review = sum(1 for r in self.review_records if r.status == "needs_review")
+        self.review_summary_labels["pending"].configure(text=str(pending))
+        self.review_summary_labels["approved"].configure(text=str(approved))
+        self.review_summary_labels["rejected"].configure(text=str(rejected))
+        self.review_summary_labels["needs_review"].configure(text=str(needs_review))
 
 
 def main() -> None:
