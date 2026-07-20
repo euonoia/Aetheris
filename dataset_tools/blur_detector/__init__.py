@@ -1,0 +1,1 @@
+"""Blur detector module."""

@@ -1,0 +1,428 @@
+I have successfully implemented Phase 7 (YOLOv8 Transfer Learning).
+
+The training pipeline is working correctly.
+
+Now I want to implement Phase 7B.
+
+Goal
+----
+
+Refactor the machine learning workflow into a production-ready and research-friendly structure.
+
+This phase is NOT about improving detection accuracy.
+
+This phase is about organizing datasets, models, experiments, and training scripts following professional machine learning engineering practices.
+
+The current FastAPI application and React dashboard are already working.
+
+Do NOT modify their behavior.
+
+Current Stack
+-------------
+
+Backend
+- FastAPI
+- OpenCV
+- YOLOv8
+- ByteTrack
+
+Frontend
+- React
+- Vite
+- TypeScript
+
+Completed Features
+------------------
+
+✅ Vehicle Detection
+
+✅ Vehicle Tracking
+
+✅ Live Monitoring Dashboard
+
+✅ WebSocket Streaming
+
+✅ Transfer Learning
+
+✅ Custom Philippine Dataset
+
+The training system already produces:
+
+best.pt
+
+runs/train/
+
+data.yaml
+
+Now I want to improve the project architecture.
+
+========================================================
+
+1. Model Registry
+
+========================================================
+
+Create a professional model registry.
+
+Instead of:
+
+models/
+
+    best.pt
+
+Create:
+
+models/
+
+    pretrained/
+
+        yolov8n.pt
+
+    custom/
+
+        barangay178_v1.pt
+
+        barangay178_v2.pt
+
+        barangay178_night.pt
+
+    archive/
+
+README.md
+
+README.md should contain:
+
+- Production model
+- Training date
+- Dataset version
+- Precision
+- Recall
+- mAP50
+- mAP50-95
+- Notes
+- Status (Production / Experimental)
+
+Never overwrite the original pretrained YOLO model.
+
+Always preserve it for comparison.
+
+========================================================
+
+2. Dataset Versioning
+
+========================================================
+
+Replace:
+
+dataset/
+
+with
+
+datasets/
+
+barangay178_v1/
+
+barangay178_v2/
+
+barangay178_rain/
+
+barangay178_night/
+
+Each dataset should contain:
+
+train/
+
+valid/
+
+test/
+
+data.yaml
+
+Create a README describing:
+
+- collection date
+- camera source
+- number of images
+- vehicle classes
+- annotation tool
+- annotation notes
+
+========================================================
+
+3. Training Package
+
+========================================================
+
+Move training scripts into:
+
+training/
+
+train.py
+
+evaluate.py
+
+export.py
+
+infer.py
+
+utils.py
+
+Keep FastAPI completely separate from training.
+
+The backend should never contain training logic.
+
+========================================================
+
+4. Configuration Files
+
+========================================================
+
+Create:
+
+training/configs/
+
+barangay178.yaml
+
+barangay178_night.yaml
+
+barangay178_rain.yaml
+
+Configurations should include:
+
+epochs
+
+batch
+
+imgsz
+
+optimizer
+
+learning_rate
+
+workers
+
+patience
+
+device
+
+cache
+
+project
+
+experiment_name
+
+Training should be executed using:
+
+python training/train.py \
+    --config training/configs/barangay178.yaml
+
+instead of passing many command-line arguments.
+
+========================================================
+
+5. Experiment Tracking
+
+========================================================
+
+Create:
+
+experiments/
+
+experiment_001/
+
+experiment_002/
+
+experiment_003/
+
+Each experiment folder should store:
+
+weights/
+
+plots/
+
+logs/
+
+metrics.json
+
+config.yaml
+
+notes.md
+
+Automatically save:
+
+Precision
+
+Recall
+
+mAP50
+
+mAP50-95
+
+Loss Curves
+
+PR Curve
+
+Confusion Matrix
+
+Training Time
+
+Dataset Version
+
+Model Version
+
+Hyperparameters
+
+========================================================
+
+6. Automatic Model Export
+
+========================================================
+
+After every successful training:
+
+Copy the best model into:
+
+models/custom/
+
+using a meaningful filename.
+
+Example:
+
+barangay178_v1.pt
+
+Do NOT overwrite previous models.
+
+Keep every successful version.
+
+========================================================
+
+7. Model Comparison
+
+========================================================
+
+Create a utility:
+
+training/compare_models.py
+
+It should compare:
+
+Pretrained YOLO
+
+vs
+
+Custom YOLO
+
+Display:
+
+Precision
+
+Recall
+
+mAP50
+
+mAP50-95
+
+Inference Speed
+
+Model Size
+
+Number of Parameters
+
+Provide a clean comparison report.
+
+========================================================
+
+8. Inference Configuration
+
+========================================================
+
+Modify the detector so that the model path is NOT hardcoded.
+
+Instead create:
+
+core/config.py
+
+Example:
+
+MODEL_PATH = "models/custom/barangay178_v1.pt"
+
+The detector should load:
+
+YOLO(settings.MODEL_PATH)
+
+This allows switching models without modifying detector.py.
+
+========================================================
+
+9. Documentation
+
+========================================================
+
+Create documentation explaining:
+
+Transfer Learning
+
+Domain Adaptation
+
+Dataset Versioning
+
+Model Versioning
+
+Experiment Tracking
+
+Configuration Management
+
+Why preserving pretrained models is important
+
+How to reproduce experiments
+
+How to rollback to previous models
+
+========================================================
+
+10. Constraints
+
+========================================================
+
+Do NOT change the existing FastAPI API endpoints.
+
+Do NOT modify the React frontend.
+
+Do NOT modify ByteTrack.
+
+Do NOT change the tracking workflow.
+
+Do NOT change WebSocket streaming.
+
+Do NOT remove any existing working functionality.
+
+This phase is purely an architectural improvement for the machine learning workflow.
+
+========================================================
+
+Expected Result
+
+========================================================
+
+The project should follow professional machine learning engineering practices.
+
+The repository should support:
+
+- reproducible experiments
+- versioned datasets
+- versioned models
+- configurable training
+- experiment history
+- model comparison
+- production-ready organization
+
+The final architecture should be scalable enough to support future research on:
+
+- vehicle counting
+- traffic analytics
+- wrong-way detection
+- illegal parking
+- violation detection
+- license plate recognition
+
+without requiring another major refactor.

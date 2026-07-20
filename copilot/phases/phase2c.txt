@@ -1,0 +1,68 @@
+I am building a YOLOv8 learning project.
+
+Current stack:
+- FastAPI
+- React + Vite + TypeScript
+- Ultralytics YOLOv8
+
+Current Progress:
+✅ Image upload
+✅ YOLO image detection
+✅ Annotated image display
+✅ Detection metadata returned as JSON
+✅ Detection table displayed in React
+
+Now I want to implement Phase 2C.
+
+Goal:
+Transform the application into a vehicle detection system by filtering YOLO results and adding configurable detection settings.
+
+Backend Requirements:
+- Continue using the existing /detect-image endpoint.
+- Run YOLO inference as before.
+- Only include the following COCO classes in the response:
+  - Car (2)
+  - Motorcycle (3)
+  - Bus (5)
+  - Truck (7)
+- Ignore all other detected classes.
+- Accept an optional confidence threshold from the request.
+- Default confidence threshold should be 0.25.
+- Return:
+  - filename
+  - image_url
+  - total_vehicle_detections
+  - vehicle_statistics
+  - detections
+
+vehicle_statistics example:
+
+{
+    "car": 6,
+    "motorcycle": 2,
+    "bus": 1,
+    "truck": 0
+}
+
+Frontend Requirements:
+- Add a confidence threshold slider (0.25–1.0).
+- Send the selected confidence threshold to the backend.
+- Display the annotated image.
+- Display vehicle summary cards showing counts for:
+    - Cars
+    - Motorcycles
+    - Buses
+    - Trucks
+    - Total Vehicles
+- Continue displaying the detection table.
+- The detection table should only contain vehicle detections.
+- Keep TypeScript types updated.
+- Do not use any.
+- Handle loading and error states.
+
+Constraints:
+- Do not implement videos.
+- Do not implement tracking.
+- Do not implement counting lines.
+- Do not implement ByteTrack.
+- Keep the architecture modular and beginner-friendly.

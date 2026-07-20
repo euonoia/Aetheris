@@ -33,7 +33,11 @@ function ListItem({ title, href, icon: Icon, description, onClick }: { title: st
   return (
     <NavigationMenuLink>
       <a href={href} onClick={onClick} className="flex items-start gap-3 rounded-md p-3 transition-colors hover:bg-secondary">
+<<<<<<< HEAD
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary text-accent">
+=======
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+>>>>>>> 888b05ef1a788984a824dbaf2566fddb1265f32a
           <Icon className="h-4 w-4" />
         </span>
         <span>
@@ -95,6 +99,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
+<<<<<<< HEAD
             <ThemeToggle />
             <Separator orientation="vertical" className="mx-1 h-6" />
             <Button variant="outline" size="sm"><Link to="/dashboard">Login</Link></Button>
@@ -104,6 +109,12 @@ export function Navbar() {
                     <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
             </Button>
+=======
+          <ThemeToggle />
+          <Separator orientation="vertical" className="mx-1 h-6" />
+          <Button variant="outline" size="sm" ><Link to="/app">Login</Link></Button>
+          <Button size="sm"><Link to="/app">Get Started <ArrowRight className="h-3.5 w-3.5" /></Link></Button>
+>>>>>>> 888b05ef1a788984a824dbaf2566fddb1265f32a
         </div>
 
         <div className="flex items-center gap-1 lg:hidden">

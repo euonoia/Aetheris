@@ -61,7 +61,11 @@ export function KeyFeatures() {
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
+<<<<<<< HEAD
           <Badge variant="default">Key Features</Badge>
+=======
+          <Badge variant="outline">Key Features</Badge>
+>>>>>>> 888b05ef1a788984a824dbaf2566fddb1265f32a
           <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">Everything enforcement needs, in one platform</h2>
           <p className="mt-3 text-muted-foreground">Six core capabilities that work together across detection, evidence, and enforcement.</p>
         </motion.div>
@@ -81,13 +85,21 @@ export function KeyFeatures() {
                     <Card className="h-full cursor-default transition-shadow hover:shadow-elevated hover:border-primary/30">
                         <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
+<<<<<<< HEAD
                             <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-secondary text-accent">
+=======
+                            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+>>>>>>> 888b05ef1a788984a824dbaf2566fddb1265f32a
                             <f.icon className="h-5 w-5" />
                             </span>
                             <span className="font-display text-2xl font-bold text-border">{f.number}</span>
                         </div>
                         <CardTitle className="pt-2 text-base leading-snug">{f.title}</CardTitle>
+<<<<<<< HEAD
                         <Badge variant="outline" className="w-fit text-[10px]">{f.tag}</Badge>
+=======
+                        <Badge variant="secondary" className="w-fit text-[10px]">{f.tag}</Badge>
+>>>>>>> 888b05ef1a788984a824dbaf2566fddb1265f32a
                         </CardHeader>
                         <CardContent className="pt-3">
                             <Separator className="mb-3" />

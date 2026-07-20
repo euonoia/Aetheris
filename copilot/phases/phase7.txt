@@ -1,0 +1,305 @@
+I am building an AI Traffic Monitoring System for Barangay 178, North Caloocan City, Philippines.
+
+Current System
+--------------
+
+Backend
+- FastAPI
+- OpenCV
+- Ultralytics YOLOv8
+- ByteTrack
+
+Frontend
+- React
+- Vite
+- TypeScript
+
+Current Features
+----------------
+
+✅ Vehicle Detection
+✅ Vehicle Tracking
+✅ Live Monitoring Dashboard
+✅ WebSocket Live Feed
+✅ Vehicle Statistics
+✅ Annotated Video Generation
+
+Now I want to implement Phase 7:
+
+Domain Adaptation through Transfer Learning.
+
+Goal
+----
+
+Fine-tune YOLOv8 so it performs better in Philippine traffic conditions instead of relying only on the generic COCO dataset.
+
+Use Transfer Learning.
+
+Do NOT train from scratch.
+
+Deployment Environment
+----------------------
+
+The final deployment location is:
+
+Barangay 178
+North Caloocan City
+Philippines
+
+The dataset should represent real Philippine road conditions.
+
+Vehicle Classes
+---------------
+
+Train ONLY the following vehicle classes:
+
+0 Car
+1 Motorcycle
+2 Bus
+3 Truck
+4 Jeepney
+5 Tricycle
+6 Van
+
+These are the ONLY classes that the model should predict because the Traffic Monitoring System is focused on vehicle monitoring.
+
+People and Scene Context
+------------------------
+
+The training images should still contain realistic Philippine traffic scenes including:
+
+- pedestrians
+- traffic enforcers
+- bicycles
+- parked vehicles
+- sidewalks
+- road signs
+- electric posts
+- traffic lights
+- intersections
+- lane markings
+- road barriers
+- buildings
+- trees
+- construction areas
+- street vendors
+- waiting passengers
+
+IMPORTANT:
+
+Do NOT create a "Person" class.
+
+Do NOT annotate pedestrians.
+
+Do NOT annotate traffic enforcers.
+
+Do NOT annotate bicycles.
+
+Do NOT annotate road signs.
+
+Do NOT annotate buildings.
+
+Do NOT annotate trees.
+
+These objects should remain unlabeled.
+
+Their purpose is only to provide environmental context so the model learns realistic Philippine road scenes while remaining focused on vehicle detection.
+
+Road Conditions
+---------------
+
+Collect images from:
+
+- barangay roads
+- highways
+- residential streets
+- intersections
+- school zones
+- market areas
+- transport terminals
+
+Weather Conditions
+------------------
+
+Include:
+
+- sunny
+- cloudy
+- rainy
+- wet roads
+- after rain
+
+Lighting
+---------
+
+Include:
+
+- morning
+- afternoon
+- sunset
+- evening
+- nighttime
+- low-light CCTV
+
+Traffic Density
+---------------
+
+Include:
+
+- empty roads
+- light traffic
+- moderate traffic
+- heavy congestion
+
+Camera Perspectives
+-------------------
+
+Include:
+
+- CCTV poles
+- elevated buildings
+- roadside cameras
+- different heights
+- different viewing angles
+
+Occlusion
+----------
+
+Include:
+
+- partially hidden vehicles
+- overlapping vehicles
+- motorcycles beside buses
+- cars behind trucks
+
+Dataset Quality
+---------------
+
+Avoid:
+
+- blurry images
+- duplicate images
+- incorrect annotations
+- inconsistent class names
+- poor bounding boxes
+- incorrect class IDs
+
+Use Label Studio, CVAT, or Roboflow for annotation.
+
+Use YOLO annotation format.
+
+Dataset Structure
+-----------------
+
+dataset/
+
+train/
+    images/
+    labels/
+
+valid/
+    images/
+    labels/
+
+test/
+    images/
+    labels/
+
+data.yaml
+
+Training
+--------
+
+Fine-tune the pretrained YOLOv8 model:
+
+YOLO("yolov8n.pt")
+
+Explain every parameter including:
+
+- epochs
+- imgsz
+- batch
+- workers
+- cache
+- optimizer
+- learning rate
+- patience
+- device
+
+Create:
+
+train.py
+
+The script should:
+
+- load data.yaml
+- train the model
+- validate the model
+- save the best weights
+- generate training graphs
+
+Validation
+----------
+
+Generate and explain:
+
+- Precision
+- Recall
+- mAP50
+- mAP50-95
+- Confusion Matrix
+- Precision-Recall Curve
+- Loss Curves
+
+Explain what good values look like and how to interpret poor performance.
+
+Model Export
+------------
+
+Save the best trained model as:
+
+best.pt
+
+Integrate it into the existing FastAPI application by replacing:
+
+YOLO("yolov8n.pt")
+
+with
+
+YOLO("models/best.pt")
+
+without changing the rest of the application.
+
+The existing tracking pipeline using ByteTrack must continue working exactly the same.
+
+Documentation
+-------------
+
+Explain:
+
+- Transfer Learning
+- Domain Adaptation
+- Why Philippine-specific data improves detection accuracy
+- Why annotation quality is more important than quantity
+- Why only vehicle classes are labeled
+- Why pedestrians and environmental objects are intentionally left unlabeled
+- Common training mistakes and how to avoid them
+
+Constraints
+-----------
+
+Do NOT train from scratch.
+
+Do NOT modify the current FastAPI backend.
+
+Do NOT modify the React frontend.
+
+Do NOT modify ByteTrack.
+
+Do NOT change the tracking workflow.
+
+Only improve the detection model through transfer learning.
+
+Keep the implementation beginner-friendly and well documented.
+
+The final result should be a custom-trained YOLOv8 model optimized for Philippine traffic environments while remaining fully compatible with the existing AI Traffic Monitoring Dashboard.
