@@ -39,7 +39,7 @@ export function DashboardPage() {
           <CardHeader className="flex-row items-center justify-between space-y-0 pb-0">
             <div>
               <CardTitle>Traffic Violation Trend</CardTitle>
-              <CardDescription>Detected violations vs. citations issued, last 6 months</CardDescription>
+              {/* <CardDescription>Detected violations vs. citations issued, last 6 months</CardDescription> */}
             </div>
             <Badge variant="outline" className="gap-1"><TrendingUp className="h-3 w-3" /> +9.4%</Badge>
           </CardHeader>
@@ -97,7 +97,7 @@ export function DashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Violation Heatmap</CardTitle>
-            <CardDescription>Concentration of detected incidents across Barangay 178</CardDescription>
+            {/* <CardDescription>Concentration of detected incidents across Barangay 178</CardDescription> */}
           </CardHeader>
           <CardContent>
             <MapPlaceholder className="h-72" />
@@ -112,7 +112,7 @@ export function DashboardPage() {
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <div>
               <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest automated detections and officer actions</CardDescription>
+              {/* <CardDescription>Latest automated detections and officer actions</CardDescription> */}
             </div>
             <Button variant="ghost" size="sm">
               <Link to="/app/violations">View all <ArrowRight className="h-3.5 w-3.5" /></Link>
@@ -120,7 +120,7 @@ export function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-1">
             {recentActivity.map((v) => (
-              <div key={v.id} className="flex items-center gap-3 rounded-md px-2 py-2.5 hover:bg-secondary/50 transition-colors">
+              <div key={v.id} className="flex items-center gap-3 rounded-md px-2 py-2.5 hover:bg-primary/20 transition-colors">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary">
                   <AlertTriangle className="h-4 w-4 text-accent" />
                 </div>

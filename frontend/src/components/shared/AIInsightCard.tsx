@@ -53,10 +53,10 @@ export function AIInsightCard() {
 
         <div className="flex items-center justify-between rounded-md bg-secondary px-3 py-2">
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
+            <Users className="h-4 w-4 text-accent" />
             <p className="text-xs font-medium">{insight.recommendation}</p>
           </div>
-          <span className="text-xs font-semibold text-primary">{insight.confidence}% conf.</span>
+          <span className="text-xs font-semibold text-accent">{insight.confidence}% conf.</span>
         </div>
       </CardContent>
     </Card>
