@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import type { TrackingSocketMessage } from "../types/api";
 
